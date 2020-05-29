@@ -6,6 +6,8 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
+![Server][server-screenshot-url]
+
 ## About The Project
 
 Project contains _server_ and _client_ parts. Server one connects to a database and handles the collection in it. Client part can connect to server, log in to the account or register it and send the collection handling commands to the server. Collection objects can be added to database, removed from it, updated, sorted, filtered and so on.
@@ -36,3 +38,4 @@ drslampro@gmail.com
 [issues-url]: https://github.com/slamach/collection-keeper/issues
 [license-shield]: https://img.shields.io/github/license/slamach/collection-keeper
 [license-url]: https://github.com/slamach/collection-keeper/blob/master/LICENSE
+[server-screenshot-url]: https://github.com/slamach/collection-keeper/blob/master/doc/server_screenshot.png

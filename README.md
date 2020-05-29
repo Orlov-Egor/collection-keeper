@@ -38,4 +38,4 @@ drslampro@gmail.com
 [issues-url]: https://github.com/slamach/collection-keeper/issues
 [license-shield]: https://img.shields.io/github/license/slamach/collection-keeper
 [license-url]: https://github.com/slamach/collection-keeper/blob/master/LICENSE
-[server-screenshot-url]: https://github.com/slamach/collection-keeper/blob/master/doc/server_screenshot.png
+[server-screenshot-url]: https://github.com/slamach/collection-keeper/blob/master/doc/server_demo.png

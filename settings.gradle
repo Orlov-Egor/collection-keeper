@@ -1,0 +1,2 @@
+rootProject.name = 'collection-keeper'
+include 'common', 'server', 'client'

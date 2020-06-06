@@ -32,6 +32,7 @@ project(':client') {
   mainClassName = 'client.App'
   dependencies {
     implementation project(':common')
+    // implementation group: 'org.controlsfx', name: 'controlsfx', version: '8.40.16'
   }
   run {
     standardInput = System.in

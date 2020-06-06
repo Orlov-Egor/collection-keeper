@@ -5,8 +5,6 @@ import client.utility.UserHandler;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;
-import javafx.application.Application;
-import javafx.stage.Stage;
 
 import java.util.Scanner;
 
@@ -15,7 +13,7 @@ import java.util.Scanner;
  *
  * @author Sviridov Dmitry and Orlov Egor.
  */
-public class App extends Application {
+public class AppOld {
     public static final String PS1 = "$ ";
     public static final String PS2 = "> ";
 
@@ -33,12 +31,6 @@ public class App extends Application {
         Client client = new Client(host, port, RECONNECTION_TIMEOUT, MAX_RECONNECTION_ATTEMPTS, userHandler, authHandler);
         client.run();
         userScanner.close();
-        //launch(args)
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        // TODO: Start
     }
 
     /**

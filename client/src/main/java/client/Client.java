@@ -17,7 +17,7 @@ import java.nio.channels.SocketChannel;
 /**
  * Runs the client.
  */
-public class Client {
+public class Client implements Runnable {
     private String host;
     private int port;
     private int reconnectionTimeout;
@@ -40,9 +40,7 @@ public class Client {
         this.authHandler = authHandler;
     }
 
-    /**
-     * Begins client operation.
-     */
+    @Override
     public void run() {
         try {
             while (true) {
@@ -67,15 +65,19 @@ public class Client {
                         Outputer.println("Повторное подключение будет произведено немедленно.");
                     }
                 }
-                reconnectionAttempts++;
+                reconnectionAttempts++; // TODO: Удалять
             }
-            if (socketChannel != null) socketChannel.close();
+            if (socketChannel != null) socketChannel.close(); // TODO: Вот это в стоп
             Outputer.println("Работа клиента завершена.");
         } catch (NotInDeclaredLimitsException exception) {
             Outputer.printerror("Клиент не может быть запущен!");
         } catch (IOException exception) {
             Outputer.printerror("Произошла ошибка при попытке завершить соединение с сервером!");
         }
+    }
+
+    public void stop() {
+        // TODO: Сделать остановку клиента
     }
 
     /**

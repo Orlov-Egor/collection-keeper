@@ -2,10 +2,14 @@ package client;
 
 import client.utility.AuthHandler;
 import client.utility.UserHandler;
+import client.view.MainWindowController;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.Scanner;
@@ -19,26 +23,20 @@ public class App extends Application {
     public static final String PS1 = "$ ";
     public static final String PS2 = "> ";
 
+    // TODO: Убрать переподключение 5 раз (Сделать 1 попытку подключения, потом сразу окно логина, если неудача - еще попытка)
     private static final int RECONNECTION_TIMEOUT = 5 * 1000;
     private static final int MAX_RECONNECTION_ATTEMPTS = 5;
+    private static final String APP_TITLE = "Collection Keeper";
 
     private static String host;
     private static int port;
+    private static Scanner userScanner;
+    private static AuthHandler authHandler;
+    private static UserHandler userHandler;
+    private static Client client;
 
     public static void main(String[] args) {
-        if (!initialize(args)) return;
-        Scanner userScanner = new Scanner(System.in);
-        AuthHandler authHandler = new AuthHandler(userScanner);
-        UserHandler userHandler = new UserHandler(userScanner);
-        Client client = new Client(host, port, RECONNECTION_TIMEOUT, MAX_RECONNECTION_ATTEMPTS, userHandler, authHandler);
-        client.run();
-        userScanner.close();
-        //launch(args)
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        // TODO: Start
+        if (initialize(args)) launch(args);
     }
 
     /**
@@ -64,5 +62,43 @@ public class App extends Application {
             Outputer.printerror("Порт не может быть отрицательным!");
         }
         return false;
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/fxml/MainWindow.fxml"));
+            Parent rootNode = loader.load();
+            Scene scene = new Scene(rootNode);
+            MainWindowController mainWindowController = loader.getController();
+
+            primaryStage.setTitle(APP_TITLE);
+
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception exception) {
+            // TODO: Обработать ошибки
+            System.out.println(exception);
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void init() {
+        userScanner = new Scanner(System.in);
+        authHandler = new AuthHandler(userScanner);
+        userHandler = new UserHandler(userScanner);
+        client = new Client(host, port, RECONNECTION_TIMEOUT, MAX_RECONNECTION_ATTEMPTS, userHandler, authHandler);
+
+        Thread clientThread = new Thread(client);
+        clientThread.setDaemon(true);
+        clientThread.start();
+    }
+
+    @Override
+    public void stop() {
+        client.stop();
+        userScanner.close();
     }
 }

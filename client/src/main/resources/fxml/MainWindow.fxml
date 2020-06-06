@@ -5,9 +5,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="680.0" prefWidth="1100.0"
-            xmlns="http://javafx.com/javafx/8.0.171">
+            xmlns="http://javafx.com/javafx/8.0.171" fx:controller="client.view.MainWindowController">
     <children>
         <VBox alignment="TOP_CENTER" prefHeight="680.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -18,21 +17,23 @@
                             <content>
                                 <AnchorPane prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <TableView prefHeight="598.0" prefWidth="445.0" AnchorPane.bottomAnchor="0.0"
-                                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                   AnchorPane.topAnchor="0.0">
+                                        <TableView fx:id="spaceMarineTable" prefHeight="598.0" prefWidth="445.0"
+                                                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn prefWidth="50.0" text="Id"/>
-                                                <TableColumn prefWidth="100.0" text="Owner"/>
-                                                <TableColumn prefWidth="125.0" text="Creation Date"/>
-                                                <TableColumn prefWidth="100.0" text="Name"/>
-                                                <TableColumn prefWidth="75.0" text="X"/>
-                                                <TableColumn prefWidth="75.0" text="Y"/>
-                                                <TableColumn prefWidth="75.0" text="Health"/>
-                                                <TableColumn prefWidth="100.0" text="Category"/>
-                                                <TableColumn prefWidth="125.0" text="Weapon"/>
-                                                <TableColumn prefWidth="125.0" text="Melee Weapon"/>
-                                                <TableColumn prefWidth="100.0" text="Chapter"/>
+                                                <TableColumn fx:id="idColumn" prefWidth="153.0" text="Id"/>
+                                                <TableColumn fx:id="ownerColumn" prefWidth="47.0" text="Owner"/>
+                                                <TableColumn fx:id="creationDateColumn" prefWidth="125.0"
+                                                             text="Creation Date"/>
+                                                <TableColumn fx:id="nameColumn" prefWidth="100.0" text="Name"/>
+                                                <TableColumn fx:id="coordinatesXColumn" prefWidth="30.0" text="X"/>
+                                                <TableColumn fx:id="coordinatesYColumn" prefWidth="30.0" text="Y"/>
+                                                <TableColumn fx:id="healthColumn" prefWidth="75.0" text="Health"/>
+                                                <TableColumn fx:id="categoryColumn" prefWidth="100.0" text="Category"/>
+                                                <TableColumn fx:id="weaponTypeColumn" prefWidth="125.0" text="Weapon"/>
+                                                <TableColumn fx:id="meleeWeaponColumn" prefWidth="125.0"
+                                                             text="Melee Weapon"/>
+                                                <TableColumn fx:id="chapterColumn" prefWidth="100.0" text="Chapter"/>
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
@@ -44,9 +45,12 @@
                         </Tab>
                         <Tab text="Canvas">
                             <content>
-                                <AnchorPane prefHeight="180.0" prefWidth="200.0">
+                                <AnchorPane fx:id="canvasPane" prefHeight="180.0" prefWidth="200.0"
+                                            style="-fx-background-color: white;">
                                     <children>
-                                        <Canvas height="550.0" width="1100.0">
+                                        <Canvas fx:id="canvas" height="550.0" width="1100.0"
+                                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <cursor>
                                                 <Cursor fx:constant="CROSSHAIR"/>
                                             </cursor>
@@ -57,6 +61,7 @@
                         </Tab>
                     </tabs>
                 </TabPane>
+                <Separator prefWidth="200.0"/>
                 <FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="10.0" prefHeight="86.0" prefWidth="898.0"
                           vgap="10.0" VBox.vgrow="SOMETIMES">
                     <children>

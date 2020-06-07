@@ -1,11 +1,11 @@
 package common.utility;
 
 /**
- * Class for outputting something
+ * Class for outputting something.
  */
 public class Outputer {
     /**
-     * Prints toOut.toString() to Console
+     * Prints toOut.toString() to Console.
      *
      * @param toOut Object to print
      */
@@ -14,14 +14,14 @@ public class Outputer {
     }
 
     /**
-     * Prints \n to Console
+     * Prints \n to Console.
      */
     public static void println() {
         System.out.println();
     }
 
     /**
-     * Prints toOut.toString() + \n to Console
+     * Prints toOut.toString() + \n to Console.
      *
      * @param toOut Object to print
      */
@@ -30,7 +30,7 @@ public class Outputer {
     }
 
     /**
-     * Prints error: toOut.toString() to Console
+     * Prints error: toOut.toString() to Console.
      *
      * @param toOut Error to print
      */
@@ -39,7 +39,7 @@ public class Outputer {
     }
 
     /**
-     * Prints formatted 2-element table to Console
+     * Prints formatted 2-element table to Console.
      *
      * @param element1 Left element of the row.
      * @param element2 Right element of the row.

@@ -1,5 +1,6 @@
-package client.view;
+package client.controllers;
 
+import client.Client;
 import common.data.*;
 import common.interaction.User;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -39,11 +40,12 @@ public class MainWindowController {
     private TableColumn<SpaceMarine, MeleeWeapon> meleeWeaponColumn;
     @FXML
     private TableColumn<SpaceMarine, Chapter> chapterColumn;
-
     @FXML
     private Canvas canvas;
     @FXML
     private AnchorPane canvasPane;
+
+    private Client client;
 
     @FXML
     private void initialize() {
@@ -83,6 +85,10 @@ public class MainWindowController {
     private void initializeCanvas() {
         canvas.widthProperty().bind(canvasPane.widthProperty());
         canvas.heightProperty().bind(canvasPane.heightProperty());
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     private ObservableList<SpaceMarine> testFill() {

@@ -1,8 +1,8 @@
 package client;
 
-import client.utility.AuthHandler;
+import client.controllers.LoginWindowController;
 import client.utility.UserHandler;
-import client.view.MainWindowController;
+import client.controllers.MainWindowController;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;
@@ -23,20 +23,19 @@ public class App extends Application {
     public static final String PS1 = "$ ";
     public static final String PS2 = "> ";
 
-    // TODO: Убрать переподключение 5 раз (Сделать 1 попытку подключения, потом сразу окно логина, если неудача - еще попытка)
-    private static final int RECONNECTION_TIMEOUT = 5 * 1000;
-    private static final int MAX_RECONNECTION_ATTEMPTS = 5;
     private static final String APP_TITLE = "Collection Keeper";
 
     private static String host;
     private static int port;
     private static Scanner userScanner;
-    private static AuthHandler authHandler;
     private static UserHandler userHandler;
     private static Client client;
 
+    private Stage primaryStage;
+
     public static void main(String[] args) {
         if (initialize(args)) launch(args);
+        else System.exit(0);
     }
 
     /**
@@ -65,17 +64,23 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/MainWindow.fxml"));
-            Parent rootNode = loader.load();
-            Scene scene = new Scene(rootNode);
-            MainWindowController mainWindowController = loader.getController();
+            this.primaryStage = stage;
+
+            FXMLLoader loginWindowLoader = new FXMLLoader();
+            loginWindowLoader.setLocation(getClass().getResource("/view/LoginWindow.fxml"));
+            Parent loginWindowRootNode = loginWindowLoader.load();
+            Scene loginWindowScene = new Scene(loginWindowRootNode);
+            LoginWindowController loginWindowController = loginWindowLoader.getController();
+            loginWindowController.setApp(this);
+            loginWindowController.setClient(client);
+            loginWindowController.initializeConnection();
 
             primaryStage.setTitle(APP_TITLE);
 
-            primaryStage.setScene(scene);
+            primaryStage.setScene(loginWindowScene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (Exception exception) {
             // TODO: Обработать ошибки
@@ -87,18 +92,33 @@ public class App extends Application {
     @Override
     public void init() {
         userScanner = new Scanner(System.in);
-        authHandler = new AuthHandler(userScanner);
         userHandler = new UserHandler(userScanner);
-        client = new Client(host, port, RECONNECTION_TIMEOUT, MAX_RECONNECTION_ATTEMPTS, userHandler, authHandler);
+        client = new Client(host, port, userHandler);
 
-        Thread clientThread = new Thread(client);
-        clientThread.setDaemon(true);
-        clientThread.start();
+        client.run();
     }
 
     @Override
     public void stop() {
         client.stop();
         userScanner.close();
+    }
+
+    public void setMainWindow() {
+        try {
+            FXMLLoader mainWindowLoader = new FXMLLoader();
+            mainWindowLoader.setLocation(getClass().getResource("/view/MainWindow.fxml"));
+            Parent mainWindowRootNode = mainWindowLoader.load();
+            Scene mainWindowScene = new Scene(mainWindowRootNode);
+            MainWindowController mainWindowController = mainWindowLoader.getController();
+            mainWindowController.setClient(client);
+
+            primaryStage.setScene(mainWindowScene);
+            primaryStage.setResizable(true);
+        } catch (Exception exception) {
+            // TODO: Обработать ошибки
+            System.out.println(exception);
+            exception.printStackTrace();
+        }
     }
 }

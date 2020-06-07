@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="318.0" prefWidth="512.0"
-            xmlns="http://javafx.com/javafx/8.0.171">
+            xmlns="http://javafx.com/javafx/8.0.171" fx:controller="client.controllers.LoginWindowController">
     <children>
         <GridPane alignment="CENTER" hgap="10.0" prefHeight="318.0" prefWidth="512.0" vgap="10.0"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -22,36 +22,41 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <padding>
                 <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
             </padding>
             <children>
-                <Label text="Username" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                <Label text="Username" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES">
                     <font>
                         <Font size="21.0"/>
                     </font>
                 </Label>
-                <Label text="Password" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                <Label text="Password" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.vgrow="SOMETIMES">
                     <font>
                         <Font size="21.0"/>
                     </font>
                 </Label>
-                <TextField GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <PasswordField GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <TextField fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                           GridPane.vgrow="SOMETIMES"/>
+                <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                               GridPane.vgrow="SOMETIMES"/>
                 <ImageView fitHeight="80.0" fitWidth="286.0" pickOnBounds="true" preserveRatio="true"
-                           GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                           GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.vgrow="ALWAYS">
                     <image>
-                        <Image url="@../img/itmo_logo_eng.png"/>
+                        <Image url="@../img/itmo_logo.png"/>
                     </image>
                 </ImageView>
                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnSpan="2"
-                      GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                      GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.vgrow="SOMETIMES">
                     <children>
-                        <CheckBox mnemonicParsing="false" text="Register"/>
-                        <Button mnemonicParsing="false" text="Sign in"/>
+                        <CheckBox fx:id="registerCheckBox" mnemonicParsing="false" text="Register"/>
+                        <Button mnemonicParsing="false" onAction="#signInButtonOnAction" text="Sign in"/>
                     </children>
                 </HBox>
+                <Label fx:id="isConnectedLabel" text="Not Connected" textFill="RED" GridPane.columnSpan="2"
+                       GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.vgrow="NEVER"/>
             </children>
         </GridPane>
     </children>

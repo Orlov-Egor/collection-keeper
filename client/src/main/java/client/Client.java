@@ -111,8 +111,7 @@ public class Client implements Runnable {
                 OutputerUI.info("Попробуйте повторить авторизацию позднее.");
             }
         }
-        if (serverResponse != null && serverResponse.getResponseCode().equals(ResponseCode.OK))
-        {
+        if (serverResponse != null && serverResponse.getResponseCode().equals(ResponseCode.OK)) {
             user = requestToServer.getUser();
             return true;
         }

@@ -50,7 +50,8 @@ public class RemoveGreaterCommand extends AbstractCommand {
             if (marineFromCollection == null) throw new MarineNotFoundException();
             for (SpaceMarine marine : collectionManager.getGreater(marineFromCollection)) {
                 if (!marine.getOwner().equals(user)) throw new PermissionDeniedException();
-                if (!databaseCollectionManager.checkMarineUserId(marine.getId(), user)) throw new ManualDatabaseEditException();
+                if (!databaseCollectionManager.checkMarineUserId(marine.getId(), user))
+                    throw new ManualDatabaseEditException();
             }
             for (SpaceMarine marine : collectionManager.getGreater(marineFromCollection)) {
                 databaseCollectionManager.deleteMarineById(marine.getId());

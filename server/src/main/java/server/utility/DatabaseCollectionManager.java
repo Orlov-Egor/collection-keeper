@@ -419,9 +419,9 @@ public class DatabaseCollectionManager {
      * Checks Marine user id.
      *
      * @param marineId Id of Marine.
-     * @param user Owner of marine.
-     * @throws DatabaseHandlingException When there's exception inside.
+     * @param user     Owner of marine.
      * @return Is everything ok.
+     * @throws DatabaseHandlingException When there's exception inside.
      */
     public boolean checkMarineUserId(long marineId, User user) throws DatabaseHandlingException {
         PreparedStatement preparedSelectMarineByIdAndUserIdStatement = null;

@@ -34,7 +34,8 @@ public class ClearCommand extends AbstractCommand {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             for (SpaceMarine marine : collectionManager.getCollection()) {
                 if (!marine.getOwner().equals(user)) throw new PermissionDeniedException();
-                if (!databaseCollectionManager.checkMarineUserId(marine.getId(), user)) throw new ManualDatabaseEditException();
+                if (!databaseCollectionManager.checkMarineUserId(marine.getId(), user))
+                    throw new ManualDatabaseEditException();
             }
             databaseCollectionManager.clearCollection();
             collectionManager.clearCollection();

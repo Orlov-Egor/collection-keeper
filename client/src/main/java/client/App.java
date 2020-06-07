@@ -1,8 +1,8 @@
 package client;
 
 import client.controllers.LoginWindowController;
-import client.utility.UserHandler;
 import client.controllers.MainWindowController;
+import client.utility.UserHandler;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;
@@ -112,6 +112,7 @@ public class App extends Application {
             Scene mainWindowScene = new Scene(mainWindowRootNode);
             MainWindowController mainWindowController = mainWindowLoader.getController();
             mainWindowController.setClient(client);
+            mainWindowController.refreshData();
 
             primaryStage.setScene(mainWindowScene);
             primaryStage.setResizable(true);

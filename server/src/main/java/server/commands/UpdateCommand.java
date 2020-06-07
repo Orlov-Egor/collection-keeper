@@ -39,7 +39,8 @@ public class UpdateCommand extends AbstractCommand {
             SpaceMarine oldMarine = collectionManager.getById(id);
             if (oldMarine == null) throw new MarineNotFoundException();
             if (!oldMarine.getOwner().equals(user)) throw new PermissionDeniedException();
-            if (!databaseCollectionManager.checkMarineUserId(oldMarine.getId(), user)) throw new ManualDatabaseEditException();
+            if (!databaseCollectionManager.checkMarineUserId(oldMarine.getId(), user))
+                throw new ManualDatabaseEditException();
             MarineRaw marineRaw = (MarineRaw) objectArgument;
 
             databaseCollectionManager.updateMarineById(id, marineRaw);

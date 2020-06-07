@@ -3,8 +3,6 @@ package client.utility;
 import common.interaction.Request;
 import common.interaction.User;
 
-import java.util.Scanner;
-
 /**
  * Handle user login and password.
  */

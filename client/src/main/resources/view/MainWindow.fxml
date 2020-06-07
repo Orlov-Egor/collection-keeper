@@ -5,8 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="680.0" prefWidth="1100.0"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="622.0" prefWidth="1000.0"
             xmlns="http://javafx.com/javafx/8.0.171" fx:controller="client.controllers.MainWindowController">
     <children>
         <VBox alignment="TOP_CENTER" prefHeight="680.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0"
@@ -66,18 +65,56 @@
                 <FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="10.0" prefHeight="86.0" prefWidth="898.0"
                           vgap="10.0" VBox.vgrow="SOMETIMES">
                     <children>
-                        <Button mnemonicParsing="false" text="Help"/>
-                        <Button mnemonicParsing="false" text="Info"/>
-                        <Button mnemonicParsing="false" text="Show"/>
-                        <Button mnemonicParsing="false" text="Add"/>
-                        <Button mnemonicParsing="false" text="Update"/>
-                        <Button mnemonicParsing="false" text="Remove by Id"/>
-                        <Button mnemonicParsing="false" text="Clear"/>
-                        <Button mnemonicParsing="false" text="Execute Script"/>
-                        <Button mnemonicParsing="false" text="Add if Min"/>
-                        <Button mnemonicParsing="false" text="Remove Greater"/>
-                        <Button mnemonicParsing="false" text="History"/>
-                        <Button mnemonicParsing="false" text="Sum of Health"/>
+                        <Button mnemonicParsing="false" text="Info">
+                            <tooltip>
+                                <Tooltip text="Show information about the collection"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Add">
+                            <tooltip>
+                                <Tooltip text="Add a new element to the collection"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Update">
+                            <tooltip>
+                                <Tooltip text="Update an element in the collection"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Remove">
+                            <tooltip>
+                                <Tooltip text="Remove an element from the collection"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Clear">
+                            <tooltip>
+                                <Tooltip text="Clear the collection"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Execute Script">
+                            <tooltip>
+                                <Tooltip text="Execute script from a file"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Add if Min">
+                            <tooltip>
+                                <Tooltip text="Add a new element if its value's' less than the smallest one's"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Remove Greater">
+                            <tooltip>
+                                <Tooltip text="Remove all elements which is higher than selected"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="History">
+                            <tooltip>
+                                <Tooltip text="Show history of used commands"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Sum of Health">
+                            <tooltip>
+                                <Tooltip text="Show sum of health of all elements"/>
+                            </tooltip>
+                        </Button>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
@@ -85,6 +122,16 @@
                 </FlowPane>
             </children>
         </VBox>
-        <ComboBox prefWidth="150.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0"/>
+        <HBox alignment="TOP_RIGHT" prefHeight="31.0" prefWidth="338.0" spacing="10.0" AnchorPane.rightAnchor="5.0"
+              AnchorPane.topAnchor="5.0">
+            <children>
+                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshData" text="Refresh">
+                    <tooltip>
+                        <Tooltip text="Update canvas and table"/>
+                    </tooltip>
+                </Button>
+                <ComboBox prefWidth="150.0"/>
+            </children>
+        </HBox>
     </children>
 </AnchorPane>

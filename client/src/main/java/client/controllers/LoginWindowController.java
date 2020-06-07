@@ -2,12 +2,20 @@ package client.controllers;
 
 import client.App;
 import client.Client;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 public class LoginWindowController {
+    private final String CONNECTED_TEXT = "Connected";
+    private final Color CONNECTED_COLOR = Color.GREEN;
+    private final String NOT_CONNECTED_TEXT = "Not Connected";
+    private final Color NOT_CONNECTED_COLOR = Color.RED;
+    App app;
+    Client client;
     @FXML
     private PasswordField passwordField;
     @FXML
@@ -17,16 +25,8 @@ public class LoginWindowController {
     @FXML
     private Label isConnectedLabel;
 
-    private final String CONNECTED_TEXT = "Connected";
-    private final Color CONNECTED_COLOR = Color.GREEN;
-    private final String NOT_CONNECTED_TEXT = "Not Connected";
-    private final Color NOT_CONNECTED_COLOR = Color.RED;
-
-    App app;
-    Client client;
-
     @FXML
-    private void signInButtonOnAction(ActionEvent event) {
+    private void signInButtonOnAction() {
         if (client.processAuthentication(usernameField.getText(),
                 passwordField.getText(),
                 registerCheckBox.isSelected())) app.setMainWindow();

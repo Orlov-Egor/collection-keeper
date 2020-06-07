@@ -34,7 +34,8 @@ public class RemoveByIdCommand extends AbstractCommand {
             SpaceMarine marineToRemove = collectionManager.getById(id);
             if (marineToRemove == null) throw new MarineNotFoundException();
             if (!marineToRemove.getOwner().equals(user)) throw new PermissionDeniedException();
-            if (!databaseCollectionManager.checkMarineUserId(marineToRemove.getId(), user)) throw new ManualDatabaseEditException();
+            if (!databaseCollectionManager.checkMarineUserId(marineToRemove.getId(), user))
+                throw new ManualDatabaseEditException();
             databaseCollectionManager.deleteMarineById(id);
             collectionManager.removeFromCollection(marineToRemove);
             ResponseOutputer.appendln("Солдат успешно удален!");

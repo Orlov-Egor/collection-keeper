@@ -87,6 +87,11 @@ public class MainWindowController {
         canvas.heightProperty().bind(canvasPane.heightProperty());
     }
 
+    @FXML
+    public void refreshData() {
+        System.out.println("SOSI, NE GOTOVO");
+    }
+
     public void setClient(Client client) {
         this.client = client;
     }

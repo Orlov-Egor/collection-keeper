@@ -1,6 +1,9 @@
 package common.interaction;
 
+import common.data.SpaceMarine;
+
 import java.io.Serializable;
+import java.util.NavigableSet;
 
 /**
  * Class for get response value.
@@ -8,10 +11,12 @@ import java.io.Serializable;
 public class Response implements Serializable {
     private ResponseCode responseCode;
     private String responseBody;
+    NavigableSet<SpaceMarine> marinesCollection;
 
-    public Response(ResponseCode responseCode, String responseBody) {
+    public Response(ResponseCode responseCode, String responseBody, NavigableSet<SpaceMarine> marinesCollection) {
         this.responseCode = responseCode;
         this.responseBody = responseBody;
+        this.marinesCollection = marinesCollection;
     }
 
     /**
@@ -26,6 +31,13 @@ public class Response implements Serializable {
      */
     public String getResponseBody() {
         return responseBody;
+    }
+
+    /**
+     * @return Marines collection last save.
+     */
+    public NavigableSet<SpaceMarine> getMarinesCollection() {
+        return marinesCollection;
     }
 
     @Override

@@ -13,10 +13,12 @@ import java.util.concurrent.RecursiveTask;
 public class HandleRequestTask extends RecursiveTask<Response> {
     private Request request;
     private CommandManager commandManager;
+    private CollectionManager collectionManager;
 
-    public HandleRequestTask(Request request, CommandManager commandManager) {
+    public HandleRequestTask(Request request, CommandManager commandManager, CollectionManager collectionManager) {
         this.request = request;
         this.commandManager = commandManager;
+        this.collectionManager = collectionManager;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class HandleRequestTask extends RecursiveTask<Response> {
         commandManager.addToHistory(request.getCommandName(), request.getUser());
         ResponseCode responseCode = executeCommand(request.getCommandName(), request.getCommandStringArgument(),
                 request.getCommandObjectArgument(), hashedUser);
-        return new Response(responseCode, ResponseOutputer.getAndClear());
+        return new Response(responseCode, ResponseOutputer.getAndClear(), collectionManager.getCollection());
     }
 
     /**
@@ -114,6 +116,10 @@ public class HandleRequestTask extends RecursiveTask<Response> {
                 break;
             case "register":
                 if (!commandManager.register(commandStringArgument, commandObjectArgument, user))
+                    return ResponseCode.ERROR;
+                break;
+            case "refresh":
+                if (!commandManager.refresh(commandStringArgument, commandObjectArgument, user))
                     return ResponseCode.ERROR;
                 break;
             default:

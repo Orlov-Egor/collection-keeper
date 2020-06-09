@@ -20,14 +20,17 @@ public class ConnectionHandler implements Runnable {
     private Server server;
     private Socket clientSocket;
     private CommandManager commandManager;
+    private CollectionManager collectionManager;
     private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
     private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(1);
 
 
-    public ConnectionHandler(Server server, Socket clientSocket, CommandManager commandManager) {
+    public ConnectionHandler(Server server, Socket clientSocket, CommandManager commandManager,
+                             CollectionManager collectionManager) {
         this.server = server;
         this.clientSocket = clientSocket;
         this.commandManager = commandManager;
+        this.collectionManager = collectionManager;
     }
 
     /**
@@ -42,13 +45,15 @@ public class ConnectionHandler implements Runnable {
              ObjectOutputStream clientWriter = new ObjectOutputStream(clientSocket.getOutputStream())) {
             do {
                 userRequest = (Request) clientReader.readObject();
-                responseToUser = forkJoinPool.invoke(new HandleRequestTask(userRequest, commandManager));
+                responseToUser = forkJoinPool.invoke(new HandleRequestTask(userRequest, commandManager,
+                        collectionManager));
                 App.logger.info("Запрос '" + userRequest.getCommandName() + "' обработан.");
                 Response finalResponseToUser = responseToUser;
                 if (!fixedThreadPool.submit(() -> {
                     try {
                         clientWriter.writeObject(finalResponseToUser);
                         clientWriter.flush();
+                        clientWriter.reset();
                         return true;
                     } catch (IOException exception) {
                         Outputer.printerror("Произошла ошибка при отправке данных на клиент!");

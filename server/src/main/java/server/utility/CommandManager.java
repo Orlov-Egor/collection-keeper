@@ -35,6 +35,7 @@ public class CommandManager {
     private Command serverExitCommand;
     private Command loginCommand;
     private Command registerCommand;
+    private Command refreshCommand;
 
     private ReadWriteLock historyLocker = new ReentrantReadWriteLock();
     private ReadWriteLock collectionLocker = new ReentrantReadWriteLock();
@@ -43,7 +44,7 @@ public class CommandManager {
                           Command removeByIdCommand, Command clearCommand, Command exitCommand, Command executeScriptCommand,
                           Command addIfMinCommand, Command removeGreaterCommand, Command historyCommand, Command sumOfHealthCommand,
                           Command maxByMeleeWeaponCommand, Command filterByWeaponTypeCommand, Command serverExitCommand,
-                          Command loginCommand, Command registerCommand) {
+                          Command loginCommand, Command registerCommand, Command refreshCommand) {
         this.helpCommand = helpCommand;
         this.infoCommand = infoCommand;
         this.showCommand = showCommand;
@@ -62,6 +63,7 @@ public class CommandManager {
         this.serverExitCommand = serverExitCommand;
         this.loginCommand = loginCommand;
         this.registerCommand = registerCommand;
+        this.refreshCommand = refreshCommand;
 
         commands.add(helpCommand);
         commands.add(infoCommand);
@@ -392,5 +394,17 @@ public class CommandManager {
      */
     public boolean register(String stringArgument, Object objectArgument, User user) {
         return registerCommand.execute(stringArgument, objectArgument, user);
+    }
+
+    /**
+     * Executes needed command.
+     *
+     * @param stringArgument Its string argument.
+     * @param objectArgument Its object argument.
+     * @param user           User object.
+     * @return Command exit status.
+     */
+    public boolean refresh(String stringArgument, Object objectArgument, User user) {
+        return refreshCommand.execute(stringArgument, objectArgument, user);
     }
 }

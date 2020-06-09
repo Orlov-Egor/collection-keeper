@@ -1,8 +1,8 @@
 package client;
 
+import client.controllers.AskWindowController;
 import client.controllers.LoginWindowController;
 import client.controllers.MainWindowController;
-import client.utility.UserHandler;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;
@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.Scanner;
@@ -28,7 +29,6 @@ public class App extends Application {
     private static String host;
     private static int port;
     private static Scanner userScanner;
-    private static UserHandler userHandler;
     private static Client client;
 
     private Stage primaryStage;
@@ -92,8 +92,7 @@ public class App extends Application {
     @Override
     public void init() {
         userScanner = new Scanner(System.in);
-        userHandler = new UserHandler(userScanner);
-        client = new Client(host, port, userHandler);
+        client = new Client(host, port);
 
         client.run();
     }
@@ -111,8 +110,24 @@ public class App extends Application {
             Parent mainWindowRootNode = mainWindowLoader.load();
             Scene mainWindowScene = new Scene(mainWindowRootNode);
             MainWindowController mainWindowController = mainWindowLoader.getController();
+
+            FXMLLoader askWindowLoader = new FXMLLoader();
+            askWindowLoader.setLocation(getClass().getResource("/view/AskWindow.fxml"));
+            Parent askWindowRootNode = askWindowLoader.load();
+            Scene askWindowScene = new Scene(askWindowRootNode);
+            Stage askStage = new Stage();
+            askStage.setTitle(APP_TITLE);
+            askStage.setScene(askWindowScene);
+            askStage.setResizable(false);
+            askStage.initModality(Modality.WINDOW_MODAL);
+            askStage.initOwner(primaryStage);
+            AskWindowController askWindowController = askWindowLoader.getController();
+            askWindowController.setAskStage(askStage);
+
             mainWindowController.setClient(client);
-            mainWindowController.refreshData();
+            mainWindowController.setAskStage(askStage);
+            mainWindowController.setAskWindowController(askWindowController);
+            mainWindowController.refreshButtonOnAction();
 
             primaryStage.setScene(mainWindowScene);
             primaryStage.setResizable(true);

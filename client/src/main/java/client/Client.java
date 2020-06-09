@@ -3,6 +3,7 @@ package client;
 import client.utility.AuthHandler;
 import client.utility.OutputerUI;
 import client.utility.UserHandler;
+import common.data.SpaceMarine;
 import common.exceptions.ConnectionErrorException;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.interaction.Request;
@@ -14,6 +15,7 @@ import common.utility.Outputer;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.NavigableSet;
 
 /**
  * Runs the client.
@@ -21,17 +23,15 @@ import java.nio.channels.SocketChannel;
 public class Client implements Runnable {
     private String host;
     private int port;
-    private UserHandler userHandler;
     private SocketChannel socketChannel;
     private ObjectOutputStream serverWriter;
     private ObjectInputStream serverReader;
     private User user;
     private boolean isConnected;
 
-    public Client(String host, int port, UserHandler userHandler) {
+    public Client(String host, int port) {
         this.host = host;
         this.port = port;
-        this.userHandler = userHandler;
     }
 
     @Override
@@ -57,39 +57,36 @@ public class Client implements Runnable {
     /**
      * Server request process.
      */
-    public void processRequestToServer() {
+    public NavigableSet<SpaceMarine> processRequestToServer(String commandName, String commandStringArgument,
+                                                            Serializable commandObjectArgument) {
         Request requestToServer = null;
         Response serverResponse = null;
-        do {
+        try {
+            requestToServer = UserHandler.handle(commandName, commandStringArgument, commandObjectArgument, user);
+            serverWriter.writeObject(requestToServer);
+            serverResponse = (Response) serverReader.readObject();
+            if (!serverResponse.getResponseBody().isEmpty()) OutputerUI.tryError(serverResponse.getResponseBody());
+        } catch (InvalidClassException | NotSerializableException exception) {
+            OutputerUI.error("Произошла ошибка при отправке данных на сервер!");
+        } catch (ClassNotFoundException exception) {
+            OutputerUI.error("Произошла ошибка при чтении полученных данных!");
+        } catch (IOException exception) {
+            OutputerUI.error("Соединение с сервером разорвано!");
             try {
-                requestToServer = serverResponse != null ? userHandler.handle(serverResponse.getResponseCode(), user) :
-                        userHandler.handle(null, user);
-                if (requestToServer.isEmpty()) continue;
-                serverWriter.writeObject(requestToServer);
-                serverResponse = (Response) serverReader.readObject();
-                OutputerUI.info(serverResponse.getResponseBody());
-            } catch (InvalidClassException | NotSerializableException exception) {
-                OutputerUI.error("Произошла ошибка при отправке данных на сервер!");
-            } catch (ClassNotFoundException exception) {
-                OutputerUI.error("Произошла ошибка при чтении полученных данных!");
-            } catch (IOException exception) {
-                OutputerUI.error("Соединение с сервером разорвано!");
-                try {
-                    connectToServer();
-                    OutputerUI.info("Соединение с сервером установлено!");
-                } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
-                    if (requestToServer.getCommandName().equals("exit"))
-                        OutputerUI.info("Команда не будет зарегистрирована на сервере.");
-                    else OutputerUI.info("Попробуйте повторить команду позднее.");
-                }
+                connectToServer();
+                OutputerUI.info("Соединение с сервером установлено!");
+            } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
+                OutputerUI.info("Попробуйте повторить авторизацию позднее.");
             }
-        } while (!requestToServer.getCommandName().equals("exit"));
+        }
+        return serverResponse == null ? null : serverResponse.getMarinesCollection();
     }
 
     /**
      * Handle process authentication.
      */
     public boolean processAuthentication(String username, String password, boolean register) {
+        // TODO: Переместить все в один метод (?)
         Request requestToServer = null;
         Response serverResponse = null;
         try {

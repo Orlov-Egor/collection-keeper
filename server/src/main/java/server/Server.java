@@ -4,6 +4,7 @@ import common.exceptions.ClosingSocketException;
 import common.exceptions.ConnectionErrorException;
 import common.exceptions.OpeningServerSocketException;
 import common.utility.Outputer;
+import server.utility.CollectionManager;
 import server.utility.CommandManager;
 import server.utility.ConnectionHandler;
 
@@ -18,23 +19,26 @@ import java.util.concurrent.TimeUnit;
 /**
  * Runs the server.
  */
-public class Server {
+public class Server implements Runnable {
     private int port;
     private ServerSocket serverSocket;
     private CommandManager commandManager;
+    private CollectionManager collectionManager;
     private boolean isStopped;
     private ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
     private Semaphore semaphore;
 
-    public Server(int port, int maxClients, CommandManager commandManager) {
+    public Server(int port, int maxClients, CommandManager commandManager, CollectionManager collectionManager) {
         this.port = port;
         this.commandManager = commandManager;
+        this.collectionManager = collectionManager;
         this.semaphore = new Semaphore(maxClients);
     }
 
     /**
      * Begins server operation.
      */
+    @Override
     public void run() {
         try {
             openServerSocket();
@@ -43,7 +47,8 @@ public class Server {
                     acquireConnection();
                     if (isStopped()) throw new ConnectionErrorException();
                     Socket clientSocket = connectToClient();
-                    cachedThreadPool.submit(new ConnectionHandler(this, clientSocket, commandManager));
+                    cachedThreadPool.submit(new ConnectionHandler(this, clientSocket, commandManager,
+                            collectionManager));
                 } catch (ConnectionErrorException exception) {
                     if (!isStopped()) {
                         Outputer.printerror("Произошла ошибка при соединении с клиентом!");

@@ -1,8 +1,9 @@
 package client.controllers;
 
 import client.Client;
+import client.utility.OutputerUI;
 import common.data.*;
-import common.interaction.User;
+import common.interaction.MarineRaw;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,11 +12,24 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.controlsfx.control.table.TableFilter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class MainWindowController {
+    private final String refreshCommandName = "refresh";
+    private final String infoCommandName = "info";
+    private final String addCommandName = "add";
+    private final String updateCommandName = "update";
+    private final String removeCommandName = "remove_by_id";
+    private final String clearCommandName = "clear";
+    private final String addIfMinCommandName = "add_if_min";
+    private final String removeGreaterCommandName = "remove_greater";
+    private final String historyCommandName = "history";
+    private final String sumOfHealthCommandName = "sum_of_health";
+
     @FXML
     private TableView<SpaceMarine> spaceMarineTable;
     @FXML
@@ -39,13 +53,17 @@ public class MainWindowController {
     @FXML
     private TableColumn<SpaceMarine, MeleeWeapon> meleeWeaponColumn;
     @FXML
-    private TableColumn<SpaceMarine, Chapter> chapterColumn;
+    private TableColumn<SpaceMarine, String> chapterNameColumn;
+    @FXML
+    private TableColumn<SpaceMarine, Long> chapterSizeColumn;
     @FXML
     private Canvas canvas;
     @FXML
     private AnchorPane canvasPane;
 
     private Client client;
+    private Stage askStage;
+    private AskWindowController askWindowController;
 
     @FXML
     private void initialize() {
@@ -74,12 +92,10 @@ public class MainWindowController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().getWeaponType()));
         meleeWeaponColumn.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().getMeleeWeapon()));
-        chapterColumn.setCellValueFactory(cellData ->
-                new ReadOnlyObjectWrapper<>(cellData.getValue().getChapter()));
-
-        spaceMarineTable.setItems(testFill());
-
-        TableFilter.forTableView(spaceMarineTable).apply();
+        chapterNameColumn.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().getChapter().getName()));
+        chapterSizeColumn.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(cellData.getValue().getChapter().getMarinesCount()));
     }
 
     private void initializeCanvas() {
@@ -88,78 +104,104 @@ public class MainWindowController {
     }
 
     @FXML
-    public void refreshData() {
-        System.out.println("SOSI, NE GOTOVO");
+    public void refreshButtonOnAction() {
+        requestAction(refreshCommandName, "", null);
+    }
+
+    @FXML
+    private void infoButtonOnAction() {
+        requestAction(infoCommandName, "", null);
+    }
+
+    @FXML
+    private void addButtonOnAction() {
+        askWindowController.clearMarine();
+        askStage.showAndWait();
+        MarineRaw marineRaw = askWindowController.getAndClear();
+        if (marineRaw != null) requestAction(addCommandName, "", marineRaw);
+    }
+
+    @FXML
+    private void updateButtonOnAction() {
+        if (!spaceMarineTable.getSelectionModel().isEmpty()) {
+            long id = spaceMarineTable.getSelectionModel().getSelectedItem().getId();
+            askWindowController.setMarine(spaceMarineTable.getSelectionModel().getSelectedItem());
+            askStage.showAndWait();
+            MarineRaw marineRaw = askWindowController.getAndClear();
+            if (marineRaw != null) requestAction(updateCommandName, id + "", marineRaw);
+        }
+        else OutputerUI.error("Select the marine to update!");
+
+    }
+
+    @FXML
+    private void removeButtonOnAction() {
+        if (!spaceMarineTable.getSelectionModel().isEmpty())
+            requestAction(removeCommandName,
+                    spaceMarineTable.getSelectionModel().getSelectedItem().getId().toString(), null);
+        else OutputerUI.error("Select the marine to remove!");
+    }
+
+    @FXML
+    private void clearButtonOnAction() {
+        requestAction(clearCommandName, "", null);
+    }
+
+    @FXML
+    private void addIfMinButtonOnAction() {
+        askWindowController.clearMarine();
+        askStage.showAndWait();
+        MarineRaw marineRaw = askWindowController.getAndClear();
+        if (marineRaw != null) requestAction(addIfMinCommandName, "", marineRaw);
+    }
+
+    @FXML
+    private void removeGreaterButtonOnAction() {
+        if (!spaceMarineTable.getSelectionModel().isEmpty())
+        {
+            SpaceMarine marineFromTable = spaceMarineTable.getSelectionModel().getSelectedItem();
+            MarineRaw marineRaw = new MarineRaw(
+                    marineFromTable.getName(),
+                    marineFromTable.getCoordinates(),
+                    marineFromTable.getHealth(),
+                    marineFromTable.getCategory(),
+                    marineFromTable.getWeaponType(),
+                    marineFromTable.getMeleeWeapon(),
+                    marineFromTable.getChapter()
+            );
+            requestAction(removeGreaterCommandName, "", marineRaw);
+        }
+
+        else OutputerUI.error("Select the marine to remove greater!");
+    }
+
+    @FXML
+    private void historyButtonOnAction() {
+        requestAction(historyCommandName, "", null);
+    }
+
+    @FXML
+    private void sumOfHealthButtonOnAction() {
+        requestAction(sumOfHealthCommandName, "", null);
+    }
+
+    private void requestAction(String commandName, String commandStringArgument, Serializable commandObjectArgument) {
+        ObservableList<SpaceMarine> marinesList =
+                FXCollections.observableArrayList(client.processRequestToServer(commandName, commandStringArgument,
+                        commandObjectArgument));
+        spaceMarineTable.setItems(marinesList);
+        TableFilter.forTableView(spaceMarineTable).apply();
     }
 
     public void setClient(Client client) {
         this.client = client;
     }
 
-    private ObservableList<SpaceMarine> testFill() {
-        // TODO: Это для тестов, удалить
-        ObservableList<SpaceMarine> testList = FXCollections.observableArrayList();
-        testList.add(new SpaceMarine(1L,
-                "Dmitry",
-                new Coordinates(0, 0f),
-                LocalDateTime.now(),
-                100,
-                AstartesCategory.ASSAULT,
-                Weapon.BOLT_PISTOL,
-                MeleeWeapon.CHAIN_AXE,
-                new Chapter("AlcoGang", 200),
-                new User("admin", "admin")));
-        testList.add(new SpaceMarine(2L,
-                "Egor",
-                new Coordinates(1, 0f),
-                LocalDateTime.now().plusDays(3),
-                117,
-                AstartesCategory.APOTHECARY,
-                Weapon.GRAV_GUN,
-                MeleeWeapon.CHAIN_SWORD,
-                new Chapter("VeloGang", 150),
-                new User("test", "test")));
-        testList.add(new SpaceMarine(3L,
-                "Alex",
-                new Coordinates(2, 0f),
-                LocalDateTime.now().plusYears(1),
-                25,
-                AstartesCategory.ASSAULT,
-                Weapon.BOLT_PISTOL,
-                MeleeWeapon.CHAIN_AXE,
-                new Chapter("BuddaGang", 250),
-                new User("admin", "admin")));
-        testList.add(new SpaceMarine(4L,
-                "Tima",
-                new Coordinates(0, 1f),
-                LocalDateTime.now().plusMonths(2),
-                112,
-                AstartesCategory.APOTHECARY,
-                Weapon.GRAV_GUN,
-                MeleeWeapon.POWER_FIST,
-                new Chapter("VeloGang", 150),
-                new User("test", "test")));
-        testList.add(new SpaceMarine(5L,
-                "Diana",
-                new Coordinates(1, 2f),
-                LocalDateTime.now().plusMinutes(45),
-                10,
-                AstartesCategory.ASSAULT,
-                Weapon.HEAVY_BOLTGUN,
-                MeleeWeapon.CHAIN_AXE,
-                new Chapter("AlcoGang", 200),
-                new User("admin", "admin")));
-        testList.add(new SpaceMarine(6L,
-                "Alina",
-                new Coordinates(1, 3f),
-                LocalDateTime.now().minusSeconds(2),
-                154,
-                AstartesCategory.APOTHECARY,
-                Weapon.GRAV_GUN,
-                MeleeWeapon.LIGHTING_CLAW,
-                new Chapter("BuddaGang", 250),
-                new User("morda", "morda")));
+    public void setAskStage(Stage askStage) {
+        this.askStage = askStage;
+    }
 
-        return testList;
+    public void setAskWindowController(AskWindowController askWindowController) {
+        this.askWindowController = askWindowController;
     }
 }

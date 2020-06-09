@@ -126,6 +126,7 @@ public class App extends Application {
 
             mainWindowController.setClient(client);
             mainWindowController.setAskStage(askStage);
+            mainWindowController.setPrimaryStage(primaryStage);
             mainWindowController.setAskWindowController(askWindowController);
             mainWindowController.refreshButtonOnAction();
 

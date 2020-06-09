@@ -46,16 +46,8 @@ public class HandleRequestTask extends RecursiveTask<Response> {
         switch (command) {
             case "":
                 break;
-            case "help":
-                if (!commandManager.help(commandStringArgument, commandObjectArgument, user))
-                    return ResponseCode.ERROR;
-                break;
             case "info":
                 if (!commandManager.info(commandStringArgument, commandObjectArgument, user))
-                    return ResponseCode.ERROR;
-                break;
-            case "show":
-                if (!commandManager.show(commandStringArgument, commandObjectArgument, user))
                     return ResponseCode.ERROR;
                 break;
             case "add":
@@ -96,14 +88,6 @@ public class HandleRequestTask extends RecursiveTask<Response> {
                 break;
             case "sum_of_health":
                 if (!commandManager.sumOfHealth(commandStringArgument, commandObjectArgument, user))
-                    return ResponseCode.ERROR;
-                break;
-            case "max_by_melee_weapon":
-                if (!commandManager.maxByMeleeWeapon(commandStringArgument, commandObjectArgument, user))
-                    return ResponseCode.ERROR;
-                break;
-            case "filter_by_weapon_type":
-                if (!commandManager.filterByWeaponType(commandStringArgument, commandObjectArgument, user))
                     return ResponseCode.ERROR;
                 break;
             case "server_exit":

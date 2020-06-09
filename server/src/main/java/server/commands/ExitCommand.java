@@ -4,13 +4,9 @@ import common.exceptions.WrongAmountOfElementsException;
 import common.interaction.User;
 import server.utility.ResponseOutputer;
 
-/**
- * Command 'exit'. Checks for wrong arguments then do nothing.
- */
 public class ExitCommand extends AbstractCommand {
-
     public ExitCommand() {
-        super("exit", "", "завершить работу клиента");
+        super("exit", "", "выйди разбiйник");
     }
 
     /**

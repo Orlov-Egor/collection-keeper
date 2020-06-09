@@ -1,8 +1,7 @@
 package client;
 
-import client.utility.AuthHandler;
+import client.controllers.MainWindowController;
 import client.utility.OutputerUI;
-import client.utility.UserHandler;
 import common.data.SpaceMarine;
 import common.exceptions.ConnectionErrorException;
 import common.exceptions.NotInDeclaredLimitsException;
@@ -46,6 +45,7 @@ public class Client implements Runnable {
 
     public void stop() {
         try {
+            processRequestToServer(MainWindowController.EXIT_COMMAND_NAME, "", null);
             socketChannel.close();
             Outputer.println("Работа клиента завершена.");
         } catch (IOException | NullPointerException exception) {
@@ -62,7 +62,7 @@ public class Client implements Runnable {
         Request requestToServer = null;
         Response serverResponse = null;
         try {
-            requestToServer = UserHandler.handle(commandName, commandStringArgument, commandObjectArgument, user);
+            requestToServer = new Request(commandName, commandStringArgument, commandObjectArgument, user);
             serverWriter.writeObject(requestToServer);
             serverResponse = (Response) serverReader.readObject();
             if (!serverResponse.getResponseBody().isEmpty()) OutputerUI.tryError(serverResponse.getResponseBody());
@@ -71,12 +71,13 @@ public class Client implements Runnable {
         } catch (ClassNotFoundException exception) {
             OutputerUI.error("Произошла ошибка при чтении полученных данных!");
         } catch (IOException exception) {
+            if (requestToServer.getCommandName().equals(MainWindowController.EXIT_COMMAND_NAME)) return null;
             OutputerUI.error("Соединение с сервером разорвано!");
             try {
                 connectToServer();
                 OutputerUI.info("Соединение с сервером установлено!");
             } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
-                OutputerUI.info("Попробуйте повторить авторизацию позднее.");
+                OutputerUI.info("Попробуйте повторить команду позднее.");
             }
         }
         return serverResponse == null ? null : serverResponse.getMarinesCollection();
@@ -89,8 +90,10 @@ public class Client implements Runnable {
         // TODO: Переместить все в один метод (?)
         Request requestToServer = null;
         Response serverResponse = null;
+        String command;
         try {
-            requestToServer = AuthHandler.handle(username, password, register);
+            command = register ? MainWindowController.REGISTER_COMMAND_NAME : MainWindowController.LOGIN_COMMAND_NAME;
+            requestToServer = new Request(command, "", new User(username, password));
             if (serverWriter == null) throw new IOException();
             serverWriter.writeObject(requestToServer);
             serverResponse = (Response) serverReader.readObject();

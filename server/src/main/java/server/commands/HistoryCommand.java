@@ -8,7 +8,6 @@ import server.utility.ResponseOutputer;
  * Command 'history'. It's here just for logical structure.
  */
 public class HistoryCommand extends AbstractCommand {
-
     public HistoryCommand() {
         super("history", "", "вывести историю использованных команд");
     }

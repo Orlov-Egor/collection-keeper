@@ -93,7 +93,7 @@
                                 <Tooltip text="Clear the collection"/>
                             </tooltip>
                         </Button>
-                        <Button mnemonicParsing="false"  text="Execute Script">
+                        <Button mnemonicParsing="false" onAction="#executeScriptButtonOnAction"  text="Execute Script">
                             <tooltip>
                                 <Tooltip text="Execute script from a file"/>
                             </tooltip>

@@ -12,23 +12,29 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.table.TableFilter;
 
+import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.NavigableSet;
 
 public class MainWindowController {
-    private final String refreshCommandName = "refresh";
-    private final String infoCommandName = "info";
-    private final String addCommandName = "add";
-    private final String updateCommandName = "update";
-    private final String removeCommandName = "remove_by_id";
-    private final String clearCommandName = "clear";
-    private final String addIfMinCommandName = "add_if_min";
-    private final String removeGreaterCommandName = "remove_greater";
-    private final String historyCommandName = "history";
-    private final String sumOfHealthCommandName = "sum_of_health";
+    public static final String LOGIN_COMMAND_NAME = "login";
+    public static final String REGISTER_COMMAND_NAME = "register";
+    public static final String REFRESH_COMMAND_NAME = "refresh";
+    public static final String INFO_COMMAND_NAME = "info";
+    public static final String ADD_COMMAND_NAME = "add";
+    public static final String UPDATE_COMMAND_NAME = "update";
+    public static final String REMOVE_COMMAND_NAME = "remove_by_id";
+    public static final String CLEAR_COMMAND_NAME = "clear";
+    public static final String EXIT_COMMAND_NAME = "exit";
+    public static final String ADD_IF_MIN_COMMAND_NAME = "add_if_min";
+    public static final String REMOVE_GREATER_COMMAND_NAME = "remove_greater";
+    public static final String HISTORY_COMMAND_NAME = "history";
+    public static final String SUM_OF_HEALTH_COMMAND_NAME = "sum_of_health";
 
     @FXML
     private TableView<SpaceMarine> spaceMarineTable;
@@ -63,12 +69,16 @@ public class MainWindowController {
 
     private Client client;
     private Stage askStage;
+    private Stage primaryStage;
+    private FileChooser fileChooser;
     private AskWindowController askWindowController;
 
     @FXML
     private void initialize() {
         initializeTable();
         initializeCanvas();
+        fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("."));
     }
 
     private void initializeTable() {
@@ -105,12 +115,12 @@ public class MainWindowController {
 
     @FXML
     public void refreshButtonOnAction() {
-        requestAction(refreshCommandName, "", null);
+        requestAction(REFRESH_COMMAND_NAME);
     }
 
     @FXML
     private void infoButtonOnAction() {
-        requestAction(infoCommandName, "", null);
+        requestAction(INFO_COMMAND_NAME);
     }
 
     @FXML
@@ -118,7 +128,7 @@ public class MainWindowController {
         askWindowController.clearMarine();
         askStage.showAndWait();
         MarineRaw marineRaw = askWindowController.getAndClear();
-        if (marineRaw != null) requestAction(addCommandName, "", marineRaw);
+        if (marineRaw != null) requestAction(ADD_COMMAND_NAME, "", marineRaw);
     }
 
     @FXML
@@ -128,7 +138,7 @@ public class MainWindowController {
             askWindowController.setMarine(spaceMarineTable.getSelectionModel().getSelectedItem());
             askStage.showAndWait();
             MarineRaw marineRaw = askWindowController.getAndClear();
-            if (marineRaw != null) requestAction(updateCommandName, id + "", marineRaw);
+            if (marineRaw != null) requestAction(UPDATE_COMMAND_NAME, id + "", marineRaw);
         }
         else OutputerUI.error("Select the marine to update!");
 
@@ -137,14 +147,20 @@ public class MainWindowController {
     @FXML
     private void removeButtonOnAction() {
         if (!spaceMarineTable.getSelectionModel().isEmpty())
-            requestAction(removeCommandName,
+            requestAction(REMOVE_COMMAND_NAME,
                     spaceMarineTable.getSelectionModel().getSelectedItem().getId().toString(), null);
         else OutputerUI.error("Select the marine to remove!");
     }
 
     @FXML
     private void clearButtonOnAction() {
-        requestAction(clearCommandName, "", null);
+        requestAction(CLEAR_COMMAND_NAME);
+    }
+
+    @FXML
+    private void executeScriptButtonOnAction() {
+        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+
     }
 
     @FXML
@@ -152,7 +168,7 @@ public class MainWindowController {
         askWindowController.clearMarine();
         askStage.showAndWait();
         MarineRaw marineRaw = askWindowController.getAndClear();
-        if (marineRaw != null) requestAction(addIfMinCommandName, "", marineRaw);
+        if (marineRaw != null) requestAction(ADD_IF_MIN_COMMAND_NAME, "", marineRaw);
     }
 
     @FXML
@@ -169,7 +185,7 @@ public class MainWindowController {
                     marineFromTable.getMeleeWeapon(),
                     marineFromTable.getChapter()
             );
-            requestAction(removeGreaterCommandName, "", marineRaw);
+            requestAction(REMOVE_GREATER_COMMAND_NAME, "", marineRaw);
         }
 
         else OutputerUI.error("Select the marine to remove greater!");
@@ -177,20 +193,27 @@ public class MainWindowController {
 
     @FXML
     private void historyButtonOnAction() {
-        requestAction(historyCommandName, "", null);
+        requestAction(HISTORY_COMMAND_NAME);
     }
 
     @FXML
     private void sumOfHealthButtonOnAction() {
-        requestAction(sumOfHealthCommandName, "", null);
+        requestAction(SUM_OF_HEALTH_COMMAND_NAME);
     }
 
     private void requestAction(String commandName, String commandStringArgument, Serializable commandObjectArgument) {
-        ObservableList<SpaceMarine> marinesList =
-                FXCollections.observableArrayList(client.processRequestToServer(commandName, commandStringArgument,
-                        commandObjectArgument));
-        spaceMarineTable.setItems(marinesList);
-        TableFilter.forTableView(spaceMarineTable).apply();
+        NavigableSet<SpaceMarine> responsedMarines = client.processRequestToServer(commandName, commandStringArgument,
+                commandObjectArgument);
+        if (responsedMarines != null)
+        {
+            ObservableList<SpaceMarine> marinesList = FXCollections.observableArrayList(responsedMarines);
+            spaceMarineTable.setItems(marinesList);
+            TableFilter.forTableView(spaceMarineTable).apply();
+        }
+    }
+
+    private void requestAction(String commandName) {
+        requestAction(commandName, "", null);
     }
 
     public void setClient(Client client) {
@@ -199,6 +222,10 @@ public class MainWindowController {
 
     public void setAskStage(Stage askStage) {
         this.askStage = askStage;
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 
     public void setAskWindowController(AskWindowController askWindowController) {

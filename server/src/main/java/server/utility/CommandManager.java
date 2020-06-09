@@ -17,9 +17,7 @@ public class CommandManager {
 
     private String[] commandHistory = new String[COMMAND_HISTORY_SIZE];
     private List<Command> commands = new ArrayList<>();
-    private Command helpCommand;
     private Command infoCommand;
-    private Command showCommand;
     private Command addCommand;
     private Command updateCommand;
     private Command removeByIdCommand;
@@ -30,8 +28,6 @@ public class CommandManager {
     private Command removeGreaterCommand;
     private Command historyCommand;
     private Command sumOfHealthCommand;
-    private Command maxByMeleeWeaponCommand;
-    private Command filterByWeaponTypeCommand;
     private Command serverExitCommand;
     private Command loginCommand;
     private Command registerCommand;
@@ -40,14 +36,11 @@ public class CommandManager {
     private ReadWriteLock historyLocker = new ReentrantReadWriteLock();
     private ReadWriteLock collectionLocker = new ReentrantReadWriteLock();
 
-    public CommandManager(Command helpCommand, Command infoCommand, Command showCommand, Command addCommand, Command updateCommand,
-                          Command removeByIdCommand, Command clearCommand, Command exitCommand, Command executeScriptCommand,
-                          Command addIfMinCommand, Command removeGreaterCommand, Command historyCommand, Command sumOfHealthCommand,
-                          Command maxByMeleeWeaponCommand, Command filterByWeaponTypeCommand, Command serverExitCommand,
-                          Command loginCommand, Command registerCommand, Command refreshCommand) {
-        this.helpCommand = helpCommand;
+    public CommandManager(Command infoCommand, Command addCommand, Command updateCommand, Command removeByIdCommand,
+                          Command clearCommand, Command exitCommand, Command executeScriptCommand, Command addIfMinCommand,
+                          Command removeGreaterCommand, Command historyCommand, Command sumOfHealthCommand,
+                          Command serverExitCommand, Command loginCommand, Command registerCommand, Command refreshCommand) {
         this.infoCommand = infoCommand;
-        this.showCommand = showCommand;
         this.addCommand = addCommand;
         this.updateCommand = updateCommand;
         this.removeByIdCommand = removeByIdCommand;
@@ -58,28 +51,21 @@ public class CommandManager {
         this.removeGreaterCommand = removeGreaterCommand;
         this.historyCommand = historyCommand;
         this.sumOfHealthCommand = sumOfHealthCommand;
-        this.maxByMeleeWeaponCommand = maxByMeleeWeaponCommand;
-        this.filterByWeaponTypeCommand = filterByWeaponTypeCommand;
         this.serverExitCommand = serverExitCommand;
         this.loginCommand = loginCommand;
         this.registerCommand = registerCommand;
         this.refreshCommand = refreshCommand;
 
-        commands.add(helpCommand);
         commands.add(infoCommand);
-        commands.add(showCommand);
         commands.add(addCommand);
         commands.add(updateCommand);
         commands.add(removeByIdCommand);
         commands.add(clearCommand);
-        commands.add(exitCommand);
         commands.add(executeScriptCommand);
         commands.add(addIfMinCommand);
         commands.add(removeGreaterCommand);
         commands.add(historyCommand);
         commands.add(sumOfHealthCommand);
-        commands.add(maxByMeleeWeaponCommand);
-        commands.add(filterByWeaponTypeCommand);
         commands.add(serverExitCommand);
     }
 
@@ -106,23 +92,6 @@ public class CommandManager {
     }
 
     /**
-     * Prints info about the all commands.
-     *
-     * @param stringArgument Its string argument.
-     * @param objectArgument Its object argument.
-     * @param user           User object.
-     * @return Command exit status.
-     */
-    public boolean help(String stringArgument, Object objectArgument, User user) {
-        if (helpCommand.execute(stringArgument, objectArgument, user)) {
-            for (Command command : commands) {
-                ResponseOutputer.appendtable(command.getName() + " " + command.getUsage(), command.getDescription());
-            }
-            return true;
-        } else return false;
-    }
-
-    /**
      * Executes needed command.
      *
      * @param stringArgument Its string argument.
@@ -134,23 +103,6 @@ public class CommandManager {
         collectionLocker.readLock().lock();
         try {
             return infoCommand.execute(stringArgument, objectArgument, user);
-        } finally {
-            collectionLocker.readLock().unlock();
-        }
-    }
-
-    /**
-     * Executes needed command.
-     *
-     * @param stringArgument Its string argument.
-     * @param objectArgument Its object argument.
-     * @param user           User object.
-     * @return Command exit status.
-     */
-    public boolean show(String stringArgument, Object objectArgument, User user) {
-        collectionLocker.readLock().lock();
-        try {
-            return showCommand.execute(stringArgument, objectArgument, user);
         } finally {
             collectionLocker.readLock().unlock();
         }
@@ -323,40 +275,6 @@ public class CommandManager {
             return sumOfHealthCommand.execute(stringArgument, objectArgument, user);
         } finally {
             collectionLocker.readLock().unlock();
-        }
-    }
-
-    /**
-     * Executes needed command.
-     *
-     * @param stringArgument Its string argument.
-     * @param objectArgument Its object argument.
-     * @param user           User object.
-     * @return Command exit status.
-     */
-    public boolean maxByMeleeWeapon(String stringArgument, Object objectArgument, User user) {
-        collectionLocker.readLock().lock();
-        try {
-            return maxByMeleeWeaponCommand.execute(stringArgument, objectArgument, user);
-        } finally {
-            collectionLocker.readLock().unlock();
-        }
-    }
-
-    /**
-     * Executes needed command.
-     *
-     * @param stringArgument Its string argument.
-     * @param objectArgument Its object argument.
-     * @param user           User object.
-     * @return Command exit status.
-     */
-    public boolean filterByWeaponType(String stringArgument, Object objectArgument, User user) {
-        collectionLocker.readLock().lock();
-        try {
-            return filterByWeaponTypeCommand.execute(stringArgument, objectArgument, user);
-        } finally {
-            collectionLocker.readLock().lock();
         }
     }
 

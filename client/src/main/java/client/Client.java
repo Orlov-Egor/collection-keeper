@@ -2,6 +2,7 @@ package client;
 
 import client.controllers.MainWindowController;
 import client.utility.OutputerUI;
+import client.utility.ScriptHandler;
 import common.data.SpaceMarine;
 import common.exceptions.ConnectionErrorException;
 import common.exceptions.NotInDeclaredLimitsException;
@@ -81,6 +82,39 @@ public class Client implements Runnable {
             }
         }
         return serverResponse == null ? null : serverResponse.getMarinesCollection();
+    }
+
+    /**
+     * Server script process.
+     */
+    public boolean processScriptToServer(File scriptFile) {
+        Request requestToServer = null;
+        Response serverResponse = null;
+        ScriptHandler scriptHandler = new ScriptHandler(scriptFile);
+        do {
+            try {
+                requestToServer = serverResponse != null ? scriptHandler.handle(serverResponse.getResponseCode(), user) :
+                        scriptHandler.handle(null, user);
+                if (requestToServer == null) return false;
+                if (requestToServer.isEmpty()) continue;
+                serverWriter.writeObject(requestToServer);
+                serverResponse = (Response) serverReader.readObject();
+                if (!serverResponse.getResponseBody().isEmpty()) OutputerUI.tryError(serverResponse.getResponseBody());
+            } catch (InvalidClassException | NotSerializableException exception) {
+                OutputerUI.error("Произошла ошибка при отправке данных на сервер!");
+            } catch (ClassNotFoundException exception) {
+                OutputerUI.error("Произошла ошибка при чтении полученных данных!");
+            } catch (IOException exception) {
+                Outputer.printerror("Соединение с сервером разорвано!");
+                try {
+                    connectToServer();
+                    OutputerUI.info("Соединение с сервером установлено!");
+                } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
+                    OutputerUI.info("Попробуйте повторить команду позднее.");
+                }
+            }
+        } while (!requestToServer.getCommandName().equals("exit"));
+        return true;
     }
 
     /**

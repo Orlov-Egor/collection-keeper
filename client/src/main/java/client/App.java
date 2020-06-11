@@ -3,6 +3,7 @@ package client;
 import client.controllers.AskWindowController;
 import client.controllers.LoginWindowController;
 import client.controllers.MainWindowController;
+import client.utility.ScriptHandler;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;

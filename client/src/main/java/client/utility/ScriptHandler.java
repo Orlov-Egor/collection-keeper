@@ -23,10 +23,13 @@ public class ScriptHandler {
     private Scanner userScanner;
     private Stack<File> scriptStack = new Stack<>();
     private Stack<Scanner> scannerStack = new Stack<>();
-    private ResponseCode lastResponseCode;
 
-    public ScriptHandler(Scanner userScanner) {
-        this.userScanner = userScanner;
+    public ScriptHandler(File scriptFile) {
+        try {
+            userScanner = new Scanner(scriptFile);
+            scannerStack.add(userScanner);
+            scriptStack.add(scriptFile);
+        } catch (Exception exception) { /* ? */ }
     }
 
     /**
@@ -45,12 +48,12 @@ public class ScriptHandler {
                 try {
                     if (serverResponseCode == ResponseCode.ERROR || serverResponseCode == ResponseCode.SERVER_EXIT)
                         throw new IncorrectInputInScriptException();
-                    while (!userScanner.hasNextLine()) {
+                    while (!scannerStack.isEmpty() && !userScanner.hasNextLine()) {
                         userScanner.close();
                         userScanner = scannerStack.pop();
-                        scriptStack.pop();
+                        if (!scannerStack.isEmpty()) scriptStack.pop();
+                        else return null;
                     }
-                    // TODO: Если последний скрипт закончился, то выходим
                     userInput = userScanner.nextLine();
                     if (!userInput.isEmpty()) {
                         Outputer.print(App.PS1);
@@ -61,12 +64,10 @@ public class ScriptHandler {
                 } catch (NoSuchElementException | IllegalStateException exception) {
                     Outputer.println();
                     Outputer.printerror("Произошла ошибка при вводе команды!");
-                    OutputerUI.error("Произошла ошибка при вводе команды!");
                     userCommand = new String[]{"", ""};
                     rewriteAttempts++;
                     if (rewriteAttempts >= maxRewriteAttempts) {
                         Outputer.printerror("Превышено количество попыток ввода!");
-                        OutputerUI.error("Превышено количество попыток ввода!");
                         System.exit(0);
                     }
                 }
@@ -95,18 +96,19 @@ public class ScriptHandler {
                 }
             } catch (FileNotFoundException exception) {
                 Outputer.printerror("Файл со скриптом не найден!");
+                throw new IncorrectInputInScriptException();
             } catch (ScriptRecursionException exception) {
                 Outputer.printerror("Скрипты не могут вызываться рекурсивно!");
                 throw new IncorrectInputInScriptException();
             }
         } catch (IncorrectInputInScriptException exception) {
-            Outputer.printerror("Выполнение скрипта прервано!");
+            OutputerUI.error("Выполнение скрипта прервано!");
             while (!scannerStack.isEmpty()) {
                 userScanner.close();
                 userScanner = scannerStack.pop();
             }
             scriptStack.clear();
-            return new Request(user);
+            return null;
         }
         return new Request(userCommand[0], userCommand[1], null, user);
     }
@@ -121,13 +123,7 @@ public class ScriptHandler {
             switch (command) {
                 case "":
                     return ProcessingCode.ERROR;
-                case "help":
-                    if (!commandArgument.isEmpty()) throw new CommandUsageException();
-                    break;
                 case "info":
-                    if (!commandArgument.isEmpty()) throw new CommandUsageException();
-                    break;
-                case "show":
                     if (!commandArgument.isEmpty()) throw new CommandUsageException();
                     break;
                 case "add":
@@ -158,15 +154,6 @@ public class ScriptHandler {
                     if (!commandArgument.isEmpty()) throw new CommandUsageException();
                     break;
                 case "sum_of_health":
-                    if (!commandArgument.isEmpty()) throw new CommandUsageException();
-                    break;
-                case "max_by_melee_weapon":
-                    if (!commandArgument.isEmpty()) throw new CommandUsageException();
-                    break;
-                case "filter_by_weapon_type":
-                    if (commandArgument.isEmpty()) throw new CommandUsageException("<weapon_type>");
-                    break;
-                case "server_exit":
                     if (!commandArgument.isEmpty()) throw new CommandUsageException();
                     break;
                 default:

@@ -4,6 +4,7 @@ import client.Client;
 import client.utility.OutputerUI;
 import common.data.*;
 import common.interaction.MarineRaw;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -160,7 +161,8 @@ public class MainWindowController {
     @FXML
     private void executeScriptButtonOnAction() {
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
-
+        if (client.processScriptToServer(selectedFile)) Platform.exit();
+        else refreshButtonOnAction();
     }
 
     @FXML

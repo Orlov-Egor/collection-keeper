@@ -132,6 +132,8 @@ public class App extends Application {
             mainWindowController.refreshButtonOnAction();
 
             primaryStage.setScene(mainWindowScene);
+            primaryStage.setMinWidth(mainWindowScene.getWidth());
+            primaryStage.setMinHeight(mainWindowScene.getHeight());
             primaryStage.setResizable(true);
         } catch (Exception exception) {
             // TODO: Обработать ошибки

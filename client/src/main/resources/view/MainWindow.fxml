@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
+
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="622.0" prefWidth="1000.0"
             xmlns="http://javafx.com/javafx/8.0.171" fx:controller="client.controllers.MainWindowController">
     <children>
@@ -49,16 +50,12 @@
                         <Tab text="Canvas">
                             <content>
                                 <AnchorPane fx:id="canvasPane" prefHeight="180.0" prefWidth="200.0"
-                                            style="-fx-background-color: white;">
-                                    <children>
-                                        <Canvas fx:id="canvas" height="550.0" width="1100.0"
-                                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <cursor>
-                                                <Cursor fx:constant="CROSSHAIR"/>
-                                            </cursor>
-                                        </Canvas>
-                                    </children>
+                                            style="-fx-background-color: white,
+                                                    linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, grey 5%, transparent 5%),
+                                                    linear-gradient(from 0.0px 0.5px to  0.0px 10.5px, repeat, grey 5%, transparent 5%);">
+                                    <cursor>
+                                        <Cursor fx:constant="CROSSHAIR"/>
+                                    </cursor>
                                 </AnchorPane>
                             </content>
                         </Tab>

@@ -9,10 +9,13 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.table.TableFilter;
@@ -20,7 +23,7 @@ import org.controlsfx.control.table.TableFilter;
 import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.NavigableSet;
+import java.util.*;
 
 public class MainWindowController {
     public static final String LOGIN_COMMAND_NAME = "login";
@@ -64,8 +67,6 @@ public class MainWindowController {
     @FXML
     private TableColumn<SpaceMarine, Long> chapterSizeColumn;
     @FXML
-    private Canvas canvas;
-    @FXML
     private AnchorPane canvasPane;
 
     private Client client;
@@ -73,13 +74,20 @@ public class MainWindowController {
     private Stage primaryStage;
     private FileChooser fileChooser;
     private AskWindowController askWindowController;
+    private Map<String, Color> userColorMap;
+    private Map<Shape, Long> shapeMap;
+    private double canvasPanePreWidth = 1000;
+    private double canvasPanePreHeight = 518;
+    private Shape prevClicked;
+    private Color prevColor;
 
     @FXML
     private void initialize() {
         initializeTable();
-        initializeCanvas();
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("."));
+        userColorMap = new HashMap<>();
+        shapeMap = new HashMap<>();
     }
 
     private void initializeTable() {
@@ -107,11 +115,6 @@ public class MainWindowController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().getChapter().getName()));
         chapterSizeColumn.setCellValueFactory(cellData ->
                 new ReadOnlyObjectWrapper<>(cellData.getValue().getChapter().getMarinesCount()));
-    }
-
-    private void initializeCanvas() {
-        canvas.widthProperty().bind(canvasPane.widthProperty());
-        canvas.heightProperty().bind(canvasPane.heightProperty());
     }
 
     @FXML
@@ -211,11 +214,47 @@ public class MainWindowController {
             ObservableList<SpaceMarine> marinesList = FXCollections.observableArrayList(responsedMarines);
             spaceMarineTable.setItems(marinesList);
             TableFilter.forTableView(spaceMarineTable).apply();
+            refreshCanvas();
         }
     }
 
     private void requestAction(String commandName) {
         requestAction(commandName, "", null);
+    }
+
+    private void refreshCanvas() {
+        shapeMap.keySet().forEach(s -> canvasPane.getChildren().remove(s));
+        shapeMap.clear();
+        for (SpaceMarine marine : spaceMarineTable.getItems())
+        {
+            if (!userColorMap.containsKey(marine.getOwner().getUsername()))
+                userColorMap.put(marine.getOwner().getUsername(),
+                        Color.color(Math.random(), Math.random(), Math.random()));
+            double x = marine.getCoordinates().getX() * (canvasPane.getWidth() / canvasPanePreWidth) + canvasPane.getWidth() / 2;
+            double y = marine.getCoordinates().getY() * (canvasPane.getHeight() / canvasPanePreHeight) + canvasPane.getHeight() / 2;
+            Shape circleMarine = new Circle(x, y, marine.getHealth(), userColorMap.get(marine.getOwner().getUsername()));
+            circleMarine.setOnMouseClicked(this::shapeOnMouseClicked);
+            canvasPane.getChildren().add(circleMarine);
+            shapeMap.put(circleMarine, marine.getId());
+        }
+    }
+
+    private void shapeOnMouseClicked(MouseEvent event) {
+        Shape shape = (Shape) event.getSource();
+        long id = shapeMap.get(shape);
+        for (SpaceMarine marine : spaceMarineTable.getItems()) {
+            if (marine.getId() == id)
+            {
+                spaceMarineTable.getSelectionModel().select(marine);
+                break;
+            }
+        }
+        if (prevClicked != null) {
+            prevClicked.setFill(prevColor);
+        }
+        prevClicked = shape;
+        prevColor = (Color) shape.getFill();
+        shape.setFill(prevColor.brighter());
     }
 
     public void setClient(Client client) {
@@ -228,6 +267,8 @@ public class MainWindowController {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> refreshCanvas());
+        primaryStage.heightProperty().addListener((observable, oldValue, newValue) -> refreshCanvas());
     }
 
     public void setAskWindowController(AskWindowController askWindowController) {

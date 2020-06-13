@@ -76,8 +76,6 @@ public class MainWindowController {
     private AskWindowController askWindowController;
     private Map<String, Color> userColorMap;
     private Map<Shape, Long> shapeMap;
-    private double canvasPanePreWidth = 1000;
-    private double canvasPanePreHeight = 518;
     private Shape prevClicked;
     private Color prevColor;
 
@@ -214,6 +212,7 @@ public class MainWindowController {
             ObservableList<SpaceMarine> marinesList = FXCollections.observableArrayList(responsedMarines);
             spaceMarineTable.setItems(marinesList);
             TableFilter.forTableView(spaceMarineTable).apply();
+            spaceMarineTable.getSelectionModel().clearSelection();
             refreshCanvas();
         }
     }
@@ -230,12 +229,12 @@ public class MainWindowController {
             if (!userColorMap.containsKey(marine.getOwner().getUsername()))
                 userColorMap.put(marine.getOwner().getUsername(),
                         Color.color(Math.random(), Math.random(), Math.random()));
-            double x = marine.getCoordinates().getX() * (canvasPane.getWidth() / canvasPanePreWidth) + canvasPane.getWidth() / 2;
-            double y = marine.getCoordinates().getY() * (canvasPane.getHeight() / canvasPanePreHeight) + canvasPane.getHeight() / 2;
-            Shape circleMarine = new Circle(x, y, marine.getHealth(), userColorMap.get(marine.getOwner().getUsername()));
-            circleMarine.setOnMouseClicked(this::shapeOnMouseClicked);
-            canvasPane.getChildren().add(circleMarine);
-            shapeMap.put(circleMarine, marine.getId());
+            Shape circleObject = new Circle(marine.getHealth(), userColorMap.get(marine.getOwner().getUsername()));
+            circleObject.setOnMouseClicked(this::shapeOnMouseClicked);
+            circleObject.translateXProperty().bind(canvasPane.widthProperty().divide(2).add(marine.getCoordinates().getX()));
+            circleObject.translateYProperty().bind(canvasPane.heightProperty().divide(2).subtract(marine.getCoordinates().getY()));
+            canvasPane.getChildren().add(circleObject);
+            shapeMap.put(circleObject, marine.getId());
         }
     }
 
@@ -267,8 +266,6 @@ public class MainWindowController {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> refreshCanvas());
-        primaryStage.heightProperty().addListener((observable, oldValue, newValue) -> refreshCanvas());
     }
 
     public void setAskWindowController(AskWindowController askWindowController) {

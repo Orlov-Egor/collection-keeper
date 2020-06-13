@@ -4,6 +4,7 @@ import client.Client;
 import client.utility.OutputerUI;
 import common.data.*;
 import common.interaction.MarineRaw;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -16,8 +17,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.controlsfx.control.table.TableFilter;
 
 import java.io.File;
@@ -39,6 +43,9 @@ public class MainWindowController {
     public static final String REMOVE_GREATER_COMMAND_NAME = "remove_greater";
     public static final String HISTORY_COMMAND_NAME = "history";
     public static final String SUM_OF_HEALTH_COMMAND_NAME = "sum_of_health";
+
+    private static final long RANDOM_SEED = 1821L;
+    private static final Duration ANIMATION_DURATION = Duration.millis(800);
 
     @FXML
     private TableView<SpaceMarine> spaceMarineTable;
@@ -76,8 +83,10 @@ public class MainWindowController {
     private AskWindowController askWindowController;
     private Map<String, Color> userColorMap;
     private Map<Shape, Long> shapeMap;
+    private Map<Long, Text> textMap;
     private Shape prevClicked;
     private Color prevColor;
+    private Random randomGenerator;
 
     @FXML
     private void initialize() {
@@ -86,6 +95,8 @@ public class MainWindowController {
         fileChooser.setInitialDirectory(new File("."));
         userColorMap = new HashMap<>();
         shapeMap = new HashMap<>();
+        textMap = new HashMap<>();
+        randomGenerator = new Random(RANDOM_SEED);
     }
 
     private void initializeTable() {
@@ -224,17 +235,37 @@ public class MainWindowController {
     private void refreshCanvas() {
         shapeMap.keySet().forEach(s -> canvasPane.getChildren().remove(s));
         shapeMap.clear();
+        textMap.values().forEach(s -> canvasPane.getChildren().remove(s));
+        textMap.clear();
         for (SpaceMarine marine : spaceMarineTable.getItems())
         {
             if (!userColorMap.containsKey(marine.getOwner().getUsername()))
                 userColorMap.put(marine.getOwner().getUsername(),
-                        Color.color(Math.random(), Math.random(), Math.random()));
+                        Color.color(randomGenerator.nextDouble(), randomGenerator.nextDouble(), randomGenerator.nextDouble()));
+
             Shape circleObject = new Circle(marine.getHealth(), userColorMap.get(marine.getOwner().getUsername()));
             circleObject.setOnMouseClicked(this::shapeOnMouseClicked);
             circleObject.translateXProperty().bind(canvasPane.widthProperty().divide(2).add(marine.getCoordinates().getX()));
             circleObject.translateYProperty().bind(canvasPane.heightProperty().divide(2).subtract(marine.getCoordinates().getY()));
+
+            Text textObject = new Text(marine.getId().toString());
+            textObject.setOnMouseClicked(circleObject::fireEvent);
+            textObject.setFont(Font.font(marine.getHealth() / 3));
+            textObject.setFill(userColorMap.get(marine.getOwner().getUsername()).darker());
+            textObject.translateXProperty().bind(circleObject.translateXProperty().subtract(textObject.getLayoutBounds().getWidth() / 2));
+            textObject.translateYProperty().bind(circleObject.translateYProperty().add(textObject.getLayoutBounds().getHeight() / 4));
+
             canvasPane.getChildren().add(circleObject);
             shapeMap.put(circleObject, marine.getId());
+            textMap.put(marine.getId(), textObject);
+
+            ScaleTransition scaleTransition = new ScaleTransition(ANIMATION_DURATION, circleObject);
+            scaleTransition.setFromX(0);
+            scaleTransition.setToX(1);
+            scaleTransition.setFromY(0);
+            scaleTransition.setToY(1);
+            scaleTransition.setOnFinished(event -> canvasPane.getChildren().add(textObject));
+            scaleTransition.play();
         }
     }
 

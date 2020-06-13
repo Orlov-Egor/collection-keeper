@@ -44,8 +44,9 @@ public class MainWindowController {
     public static final String HISTORY_COMMAND_NAME = "history";
     public static final String SUM_OF_HEALTH_COMMAND_NAME = "sum_of_health";
 
-    private static final long RANDOM_SEED = 1821L;
-    private static final Duration ANIMATION_DURATION = Duration.millis(800);
+    private final long RANDOM_SEED = 1821L;
+    private final Duration ANIMATION_DURATION = Duration.millis(800);
+    private final double MAX_SIZE = 250;
 
     @FXML
     private TableView<SpaceMarine> spaceMarineTable;
@@ -243,14 +244,16 @@ public class MainWindowController {
                 userColorMap.put(marine.getOwner().getUsername(),
                         Color.color(randomGenerator.nextDouble(), randomGenerator.nextDouble(), randomGenerator.nextDouble()));
 
-            Shape circleObject = new Circle(marine.getHealth(), userColorMap.get(marine.getOwner().getUsername()));
+            double size = Math.min(marine.getHealth(), MAX_SIZE);
+
+            Shape circleObject = new Circle(size, userColorMap.get(marine.getOwner().getUsername()));
             circleObject.setOnMouseClicked(this::shapeOnMouseClicked);
             circleObject.translateXProperty().bind(canvasPane.widthProperty().divide(2).add(marine.getCoordinates().getX()));
             circleObject.translateYProperty().bind(canvasPane.heightProperty().divide(2).subtract(marine.getCoordinates().getY()));
 
             Text textObject = new Text(marine.getId().toString());
             textObject.setOnMouseClicked(circleObject::fireEvent);
-            textObject.setFont(Font.font(marine.getHealth() / 3));
+            textObject.setFont(Font.font(size / 3));
             textObject.setFill(userColorMap.get(marine.getOwner().getUsername()).darker());
             textObject.translateXProperty().bind(circleObject.translateXProperty().subtract(textObject.getLayoutBounds().getWidth() / 2));
             textObject.translateYProperty().bind(circleObject.translateYProperty().add(textObject.getLayoutBounds().getHeight() / 4));

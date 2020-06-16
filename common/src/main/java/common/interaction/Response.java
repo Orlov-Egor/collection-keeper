@@ -9,9 +9,9 @@ import java.util.NavigableSet;
  * Class for get response value.
  */
 public class Response implements Serializable {
+    NavigableSet<SpaceMarine> marinesCollection;
     private ResponseCode responseCode;
     private String responseBody;
-    NavigableSet<SpaceMarine> marinesCollection;
 
     public Response(ResponseCode responseCode, String responseBody, NavigableSet<SpaceMarine> marinesCollection) {
         this.responseCode = responseCode;

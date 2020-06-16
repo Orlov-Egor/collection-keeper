@@ -35,7 +35,7 @@ public class ScriptHandler {
     /**
      * Receives user input.
      *
-     * @param user               User object.
+     * @param user User object.
      * @return New request to server.
      */
     public Request handle(ResponseCode serverResponseCode, User user) {

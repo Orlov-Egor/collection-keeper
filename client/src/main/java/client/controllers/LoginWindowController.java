@@ -14,7 +14,8 @@ public class LoginWindowController {
     private final Color CONNECTED_COLOR = Color.GREEN;
     private final String NOT_CONNECTED_TEXT = "Not Connected";
     private final Color NOT_CONNECTED_COLOR = Color.RED;
-
+    App app;
+    Client client;
     @FXML
     private PasswordField passwordField;
     @FXML
@@ -23,9 +24,6 @@ public class LoginWindowController {
     private CheckBox registerCheckBox;
     @FXML
     private Label isConnectedLabel;
-
-    App app;
-    Client client;
 
     @FXML
     private void signInButtonOnAction() {

@@ -3,7 +3,7 @@ package client;
 import client.controllers.AskWindowController;
 import client.controllers.LoginWindowController;
 import client.controllers.MainWindowController;
-import client.utility.ScriptHandler;
+import client.controllers.tools.ObservableResourceFactory;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
 import common.utility.Outputer;
@@ -106,11 +106,14 @@ public class App extends Application {
 
     public void setMainWindow() {
         try {
+            ObservableResourceFactory resourceFactory = new ObservableResourceFactory();
+
             FXMLLoader mainWindowLoader = new FXMLLoader();
             mainWindowLoader.setLocation(getClass().getResource("/view/MainWindow.fxml"));
             Parent mainWindowRootNode = mainWindowLoader.load();
             Scene mainWindowScene = new Scene(mainWindowRootNode);
             MainWindowController mainWindowController = mainWindowLoader.getController();
+            mainWindowController.initLangs(resourceFactory);
 
             FXMLLoader askWindowLoader = new FXMLLoader();
             askWindowLoader.setLocation(getClass().getResource("/view/AskWindow.fxml"));
@@ -124,6 +127,7 @@ public class App extends Application {
             askStage.initOwner(primaryStage);
             AskWindowController askWindowController = askWindowLoader.getController();
             askWindowController.setAskStage(askStage);
+            askWindowController.setResourceFactory(resourceFactory);
 
             mainWindowController.setClient(client);
             mainWindowController.setAskStage(askStage);

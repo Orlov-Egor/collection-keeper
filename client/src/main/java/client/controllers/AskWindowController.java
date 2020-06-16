@@ -1,18 +1,41 @@
 package client.controllers;
 
+import client.controllers.tools.ObservableResourceFactory;
 import client.utility.OutputerUI;
 import common.data.*;
 import common.exceptions.MustBeNotEmptyException;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.interaction.MarineRaw;
-import common.utility.Outputer;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class AskWindowController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class AskWindowController implements Initializable {
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private Label coordinatesXLabel;
+    @FXML
+    private Label coordinatesYLabel;
+    @FXML
+    private Label healthLabel;
+    @FXML
+    private Label categoryLabel;
+    @FXML
+    private Label weaponLabel;
+    @FXML
+    private Label meleeWeaponLabel;
+    @FXML
+    private Label chapterNameLabel;
+    @FXML
+    private Label chapterSizeLabel;
     @FXML
     private TextField nameField;
     @FXML
@@ -34,9 +57,10 @@ public class AskWindowController {
 
     private Stage askStage;
     private MarineRaw resultMarine;
+    private ObservableResourceFactory resourceFactory;
 
-    @FXML
-    private void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         categoryBox.setItems(FXCollections.observableArrayList(AstartesCategory.values()));
         weaponBox.setItems(FXCollections.observableArrayList(Weapon.values()));
         meleeWeaponBox.setItems(FXCollections.observableArrayList(MeleeWeapon.values()));
@@ -64,6 +88,18 @@ public class AskWindowController {
         } catch (IllegalArgumentException exception) { /* ? */ }
     }
 
+    private void bindGuiLanguage() {
+        nameLabel.textProperty().bind(resourceFactory.getStringBinding("NameColumn"));
+        coordinatesXLabel.textProperty().bind(resourceFactory.getStringBinding("CoordinatesXColumn"));
+        coordinatesYLabel.textProperty().bind(resourceFactory.getStringBinding("CoordinatesYColumn"));
+        healthLabel.textProperty().bind(resourceFactory.getStringBinding("HealthColumn"));
+        categoryLabel.textProperty().bind(resourceFactory.getStringBinding("CategoryColumn"));
+        weaponLabel.textProperty().bind(resourceFactory.getStringBinding("WeaponColumn"));
+        meleeWeaponLabel.textProperty().bind(resourceFactory.getStringBinding("MeleeWeaponColumn"));
+        chapterNameLabel.textProperty().bind(resourceFactory.getStringBinding("ChapterNameColumn"));
+        chapterSizeLabel.textProperty().bind(resourceFactory.getStringBinding("ChapterSizeColumn"));
+    }
+
     private String convertName() throws IllegalArgumentException {
         String name;
         try {
@@ -79,13 +115,13 @@ public class AskWindowController {
     private double convertCoordinatesxX() throws IllegalArgumentException {
         String strX;
         double x;
-            try {
-                strX = coordinatesXField.getText();
-                x = Double.parseDouble(strX);
-            } catch (NumberFormatException exception) {
-                OutputerUI.error("X must be a number!");
-                throw new IllegalArgumentException();
-            }
+        try {
+            strX = coordinatesXField.getText();
+            x = Double.parseDouble(strX);
+        } catch (NumberFormatException exception) {
+            OutputerUI.error("X must be a number!");
+            throw new IllegalArgumentException();
+        }
         return x;
     }
 
@@ -138,18 +174,18 @@ public class AskWindowController {
     private long convertChapterSize() throws IllegalArgumentException {
         String strMarinesCount;
         long marinesCount;
-            try {
-                strMarinesCount = chapterSizeField.getText();
-                marinesCount = Long.parseLong(strMarinesCount);
-                if (marinesCount < SpaceMarine.MIN_MARINES || marinesCount > SpaceMarine.MAX_MARINES)
-                    throw new NotInDeclaredLimitsException();
-            } catch (NotInDeclaredLimitsException exception) {
-                OutputerUI.error("Chapter size must be positive and less than " + (SpaceMarine.MAX_MARINES + 1) + "!");
-                throw new IllegalArgumentException();
-            } catch (NumberFormatException exception) {
-                OutputerUI.error("Chapter size must be a number!");
-                throw new IllegalArgumentException();
-            }
+        try {
+            strMarinesCount = chapterSizeField.getText();
+            marinesCount = Long.parseLong(strMarinesCount);
+            if (marinesCount < SpaceMarine.MIN_MARINES || marinesCount > SpaceMarine.MAX_MARINES)
+                throw new NotInDeclaredLimitsException();
+        } catch (NotInDeclaredLimitsException exception) {
+            OutputerUI.error("Chapter size must be positive and less than " + (SpaceMarine.MAX_MARINES + 1) + "!");
+            throw new IllegalArgumentException();
+        } catch (NumberFormatException exception) {
+            OutputerUI.error("Chapter size must be a number!");
+            throw new IllegalArgumentException();
+        }
         return marinesCount;
     }
 
@@ -177,13 +213,19 @@ public class AskWindowController {
         meleeWeaponBox.setValue(MeleeWeapon.CHAIN_SWORD);
     }
 
-    public void setAskStage(Stage askStage) {
-        this.askStage = askStage;
-    }
-
     public MarineRaw getAndClear() {
         MarineRaw marineToReturn = resultMarine;
         resultMarine = null;
         return marineToReturn;
+    }
+
+    public void setAskStage(Stage askStage) {
+        this.askStage = askStage;
+    }
+
+
+    public void setResourceFactory(ObservableResourceFactory resourceFactory) {
+        this.resourceFactory = resourceFactory;
+        bindGuiLanguage();
     }
 }

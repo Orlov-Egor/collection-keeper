@@ -76,7 +76,7 @@ public class Client implements Runnable {
             OutputerUI.error("Соединение с сервером разорвано!");
             try {
                 connectToServer();
-                OutputerUI.info("Соединение с сервером установлено!");
+                OutputerUI.info("Соединение с сервером установлено.");
             } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
                 OutputerUI.info("Попробуйте повторить команду позднее.");
             }
@@ -108,7 +108,7 @@ public class Client implements Runnable {
                 Outputer.printerror("Соединение с сервером разорвано!");
                 try {
                     connectToServer();
-                    OutputerUI.info("Соединение с сервером установлено!");
+                    OutputerUI.info("Соединение с сервером установлено.");
                 } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
                     OutputerUI.info("Попробуйте повторить команду позднее.");
                 }
@@ -140,7 +140,7 @@ public class Client implements Runnable {
             OutputerUI.error("Соединение с сервером разорвано!");
             try {
                 connectToServer();
-                OutputerUI.info("Соединение с сервером установлено!");
+                OutputerUI.info("Соединение с сервером установлено.");
             } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
                 OutputerUI.info("Попробуйте повторить авторизацию позднее.");
             }

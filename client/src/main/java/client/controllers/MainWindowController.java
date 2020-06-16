@@ -1,8 +1,12 @@
 package client.controllers;
 
 import client.Client;
+import client.controllers.tools.ObservableResourceFactory;
 import client.utility.OutputerUI;
-import common.data.*;
+import common.data.AstartesCategory;
+import common.data.MeleeWeapon;
+import common.data.SpaceMarine;
+import common.data.Weapon;
 import common.interaction.MarineRaw;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
@@ -10,8 +14,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -47,6 +50,7 @@ public class MainWindowController {
     private final long RANDOM_SEED = 1821L;
     private final Duration ANIMATION_DURATION = Duration.millis(800);
     private final double MAX_SIZE = 250;
+    private final String BUNDLE_NAME = "bundles.gui";
 
     @FXML
     private TableView<SpaceMarine> spaceMarineTable;
@@ -76,6 +80,56 @@ public class MainWindowController {
     private TableColumn<SpaceMarine, Long> chapterSizeColumn;
     @FXML
     private AnchorPane canvasPane;
+    @FXML
+    private Tab tableTab;
+    @FXML
+    private Tab canvasTab;
+    @FXML
+    private Button infoButton;
+    @FXML
+    private Button addButton;
+    @FXML
+    private Button updateButton;
+    @FXML
+    private Button removeButton;
+    @FXML
+    private Button clearButton;
+    @FXML
+    private Button executeScriptButton;
+    @FXML
+    private Button addIfMinButton;
+    @FXML
+    private Button removeGreaterButton;
+    @FXML
+    private Button historyButton;
+    @FXML
+    private Button sumOfHealthButton;
+    @FXML
+    private Button refreshButton;
+    @FXML
+    private Tooltip infoButtonTooltip;
+    @FXML
+    private Tooltip addButtonTooltip;
+    @FXML
+    private Tooltip updateButtonTooltip;
+    @FXML
+    private Tooltip removeButtonTooltip;
+    @FXML
+    private Tooltip clearButtonTooltip;
+    @FXML
+    private Tooltip executeScriptButtonTooltip;
+    @FXML
+    private Tooltip addIfMinButtonTooltip;
+    @FXML
+    private Tooltip removeGreaterButtonTooltip;
+    @FXML
+    private Tooltip historyButtonTooltip;
+    @FXML
+    private Tooltip sumOfHealthButtonTooltip;
+    @FXML
+    private Tooltip refreshButtonTooltip;
+    @FXML
+    private ComboBox<String> languageComboBox;
 
     private Client client;
     private Stage askStage;
@@ -88,9 +142,10 @@ public class MainWindowController {
     private Shape prevClicked;
     private Color prevColor;
     private Random randomGenerator;
+    private ObservableResourceFactory resourceFactory;
+    private Map<String, Locale> localeMap;
 
-    @FXML
-    private void initialize() {
+    public void initialize() {
         initializeTable();
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("."));
@@ -98,6 +153,16 @@ public class MainWindowController {
         shapeMap = new HashMap<>();
         textMap = new HashMap<>();
         randomGenerator = new Random(RANDOM_SEED);
+        localeMap = new HashMap<>();
+        localeMap.put("English", new Locale("en", "NZ"));
+        localeMap.put("Русский", new Locale("ru", "RU"));
+        localeMap.put("Deutsche", new Locale("de", "DE"));
+        localeMap.put("Dansk", new Locale("da", "DK"));
+        languageComboBox.setItems(FXCollections.observableArrayList(localeMap.keySet()));
+        languageComboBox.getSelectionModel().selectFirst();
+        languageComboBox.setOnAction((event) ->
+                resourceFactory.setResources(ResourceBundle.getBundle
+                        (BUNDLE_NAME, localeMap.get(languageComboBox.getValue()))));
     }
 
     private void initializeTable() {
@@ -127,6 +192,51 @@ public class MainWindowController {
                 new ReadOnlyObjectWrapper<>(cellData.getValue().getChapter().getMarinesCount()));
     }
 
+    private void bindGuiLanguage() {
+        resourceFactory.setResources(ResourceBundle.getBundle
+                (BUNDLE_NAME, localeMap.get(languageComboBox.getSelectionModel().getSelectedItem())));
+
+        idColumn.textProperty().bind(resourceFactory.getStringBinding("IdColumn"));
+        ownerColumn.textProperty().bind(resourceFactory.getStringBinding("OwnerColumn"));
+        creationDateColumn.textProperty().bind(resourceFactory.getStringBinding("CreationDateColumn"));
+        nameColumn.textProperty().bind(resourceFactory.getStringBinding("NameColumn"));
+        coordinatesXColumn.textProperty().bind(resourceFactory.getStringBinding("CoordinatesXColumn"));
+        coordinatesYColumn.textProperty().bind(resourceFactory.getStringBinding("CoordinatesYColumn"));
+        healthColumn.textProperty().bind(resourceFactory.getStringBinding("HealthColumn"));
+        categoryColumn.textProperty().bind(resourceFactory.getStringBinding("CategoryColumn"));
+        weaponTypeColumn.textProperty().bind(resourceFactory.getStringBinding("WeaponColumn"));
+        meleeWeaponColumn.textProperty().bind(resourceFactory.getStringBinding("MeleeWeaponColumn"));
+        chapterNameColumn.textProperty().bind(resourceFactory.getStringBinding("ChapterNameColumn"));
+        chapterSizeColumn.textProperty().bind(resourceFactory.getStringBinding("ChapterSizeColumn"));
+
+        tableTab.textProperty().bind(resourceFactory.getStringBinding("TableTab"));
+        canvasTab.textProperty().bind(resourceFactory.getStringBinding("CanvasTab"));
+
+        infoButton.textProperty().bind(resourceFactory.getStringBinding("InfoButton"));
+        addButton.textProperty().bind(resourceFactory.getStringBinding("AddButton"));
+        updateButton.textProperty().bind(resourceFactory.getStringBinding("UpdateButton"));
+        removeButton.textProperty().bind(resourceFactory.getStringBinding("RemoveButton"));
+        clearButton.textProperty().bind(resourceFactory.getStringBinding("ClearButton"));
+        executeScriptButton.textProperty().bind(resourceFactory.getStringBinding("ExecuteScriptButton"));
+        addIfMinButton.textProperty().bind(resourceFactory.getStringBinding("AddIfMinButton"));
+        removeGreaterButton.textProperty().bind(resourceFactory.getStringBinding("RemoveGreaterButton"));
+        historyButton.textProperty().bind(resourceFactory.getStringBinding("HistoryButton"));
+        sumOfHealthButton.textProperty().bind(resourceFactory.getStringBinding("SumOfHealthButton"));
+        refreshButton.textProperty().bind(resourceFactory.getStringBinding("RefreshButton"));
+
+        infoButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("InfoButtonTooltip"));
+        addButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("AddButtonTooltip"));
+        updateButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("UpdateButtonTooltip"));
+        removeButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("RemoveButtonTooltip"));
+        clearButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("ClearButtonTooltip"));
+        executeScriptButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("ExecuteScriptButtonTooltip"));
+        addIfMinButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("AddIfMinButtonTooltip"));
+        removeGreaterButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("RemoveGreaterButtonTooltip"));
+        historyButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("HistoryButtonTooltip"));
+        sumOfHealthButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("SumOfHealthButtonTooltip"));
+        refreshButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("RefreshButtonTooltip"));
+    }
+
     @FXML
     public void refreshButtonOnAction() {
         requestAction(REFRESH_COMMAND_NAME);
@@ -153,8 +263,7 @@ public class MainWindowController {
             askStage.showAndWait();
             MarineRaw marineRaw = askWindowController.getAndClear();
             if (marineRaw != null) requestAction(UPDATE_COMMAND_NAME, id + "", marineRaw);
-        }
-        else OutputerUI.error("Select the marine to update!");
+        } else OutputerUI.error("Select the marine to update!");
 
     }
 
@@ -188,8 +297,7 @@ public class MainWindowController {
 
     @FXML
     private void removeGreaterButtonOnAction() {
-        if (!spaceMarineTable.getSelectionModel().isEmpty())
-        {
+        if (!spaceMarineTable.getSelectionModel().isEmpty()) {
             SpaceMarine marineFromTable = spaceMarineTable.getSelectionModel().getSelectedItem();
             MarineRaw marineRaw = new MarineRaw(
                     marineFromTable.getName(),
@@ -201,9 +309,7 @@ public class MainWindowController {
                     marineFromTable.getChapter()
             );
             requestAction(REMOVE_GREATER_COMMAND_NAME, "", marineRaw);
-        }
-
-        else OutputerUI.error("Select the marine to remove greater!");
+        } else OutputerUI.error("Select the marine to remove greater!");
     }
 
     @FXML
@@ -219,8 +325,7 @@ public class MainWindowController {
     private void requestAction(String commandName, String commandStringArgument, Serializable commandObjectArgument) {
         NavigableSet<SpaceMarine> responsedMarines = client.processRequestToServer(commandName, commandStringArgument,
                 commandObjectArgument);
-        if (responsedMarines != null)
-        {
+        if (responsedMarines != null) {
             ObservableList<SpaceMarine> marinesList = FXCollections.observableArrayList(responsedMarines);
             spaceMarineTable.setItems(marinesList);
             TableFilter.forTableView(spaceMarineTable).apply();
@@ -238,8 +343,7 @@ public class MainWindowController {
         shapeMap.clear();
         textMap.values().forEach(s -> canvasPane.getChildren().remove(s));
         textMap.clear();
-        for (SpaceMarine marine : spaceMarineTable.getItems())
-        {
+        for (SpaceMarine marine : spaceMarineTable.getItems()) {
             if (!userColorMap.containsKey(marine.getOwner().getUsername()))
                 userColorMap.put(marine.getOwner().getUsername(),
                         Color.color(randomGenerator.nextDouble(), randomGenerator.nextDouble(), randomGenerator.nextDouble()));
@@ -276,8 +380,7 @@ public class MainWindowController {
         Shape shape = (Shape) event.getSource();
         long id = shapeMap.get(shape);
         for (SpaceMarine marine : spaceMarineTable.getItems()) {
-            if (marine.getId() == id)
-            {
+            if (marine.getId() == id) {
                 spaceMarineTable.getSelectionModel().select(marine);
                 break;
             }
@@ -304,5 +407,10 @@ public class MainWindowController {
 
     public void setAskWindowController(AskWindowController askWindowController) {
         this.askWindowController = askWindowController;
+    }
+
+    public void initLangs(ObservableResourceFactory resourceFactory) {
+        this.resourceFactory = resourceFactory;
+        bindGuiLanguage();
     }
 }

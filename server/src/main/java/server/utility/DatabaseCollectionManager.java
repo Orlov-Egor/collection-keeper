@@ -4,7 +4,6 @@ import common.data.*;
 import common.exceptions.DatabaseHandlingException;
 import common.interaction.MarineRaw;
 import common.interaction.User;
-import common.utility.Outputer;
 import server.App;
 
 import java.sql.PreparedStatement;

@@ -9,7 +9,7 @@ import common.interaction.MarineRaw;
 import common.interaction.Request;
 import common.interaction.ResponseCode;
 import common.interaction.User;
-import common.utility.Outputer;
+import client.utility.Outputer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,11 +63,11 @@ public class ScriptHandler {
                     userCommand[1] = userCommand[1].trim();
                 } catch (NoSuchElementException | IllegalStateException exception) {
                     Outputer.println();
-                    Outputer.printerror("Произошла ошибка при вводе команды!");
+                    Outputer.printerror("CommandErrorException");
                     userCommand = new String[]{"", ""};
                     rewriteAttempts++;
                     if (rewriteAttempts >= maxRewriteAttempts) {
-                        Outputer.printerror("Превышено количество попыток ввода!");
+                        Outputer.printerror("RewriteAttemptsException");
                         System.exit(0);
                     }
                 }
@@ -91,18 +91,18 @@ public class ScriptHandler {
                         scannerStack.push(userScanner);
                         scriptStack.push(scriptFile);
                         userScanner = new Scanner(scriptFile);
-                        Outputer.println("Выполняю скрипт '" + scriptFile.getName() + "'...");
+                        Outputer.println("ScriptRunning", scriptFile.getName());
                         break;
                 }
             } catch (FileNotFoundException exception) {
-                Outputer.printerror("Файл со скриптом не найден!");
+                Outputer.printerror("ScriptFileNotFoundException");
                 throw new IncorrectInputInScriptException();
             } catch (ScriptRecursionException exception) {
-                Outputer.printerror("Скрипты не могут вызываться рекурсивно!");
+                Outputer.printerror("ScriptRecursionException");
                 throw new IncorrectInputInScriptException();
             }
         } catch (IncorrectInputInScriptException exception) {
-            OutputerUI.error("Выполнение скрипта прервано!");
+            OutputerUI.error("IncorrectInputInScriptException");
             while (!scannerStack.isEmpty()) {
                 userScanner.close();
                 userScanner = scannerStack.pop();
@@ -157,12 +157,12 @@ public class ScriptHandler {
                     if (!commandArgument.isEmpty()) throw new CommandUsageException();
                     break;
                 default:
-                    Outputer.println("Команда '" + command + "' не найдена. Наберите 'help' для справки.");
+                    Outputer.println("CommandNotFoundException", command);
                     return ProcessingCode.ERROR;
             }
         } catch (CommandUsageException exception) {
             if (exception.getMessage() != null) command += " " + exception.getMessage();
-            Outputer.println("Использование: '" + command + "'");
+            Outputer.println("Using", command);
             return ProcessingCode.ERROR;
         }
         return ProcessingCode.OK;
@@ -195,19 +195,19 @@ public class ScriptHandler {
      */
     private MarineRaw generateMarineUpdate() throws IncorrectInputInScriptException {
         MarineAsker marineAsker = new MarineAsker(userScanner);
-        String name = marineAsker.askQuestion("Хотите изменить имя солдата?") ?
+        String name = marineAsker.askQuestion("ChangeNameQuestion") ?
                 marineAsker.askName() : null;
-        Coordinates coordinates = marineAsker.askQuestion("Хотите изменить координаты солдата?") ?
+        Coordinates coordinates = marineAsker.askQuestion("ChangeCoordinatesQuestion") ?
                 marineAsker.askCoordinates() : null;
-        double health = marineAsker.askQuestion("Хотите изменить здоровье солдата?") ?
+        double health = marineAsker.askQuestion("ChangeHealthQuestion") ?
                 marineAsker.askHealth() : -1;
-        AstartesCategory category = marineAsker.askQuestion("Хотите изменить категорию солдата?") ?
+        AstartesCategory category = marineAsker.askQuestion("ChangeCategoryQuestion") ?
                 marineAsker.askCategory() : null;
-        Weapon weaponType = marineAsker.askQuestion("Хотите изменить оружие дальнего боя солдата?") ?
+        Weapon weaponType = marineAsker.askQuestion("ChangeWeaponQuestion") ?
                 marineAsker.askWeaponType() : null;
-        MeleeWeapon meleeWeapon = marineAsker.askQuestion("Хотите изменить оружие ближнего боя солдата?") ?
+        MeleeWeapon meleeWeapon = marineAsker.askQuestion("ChangeMeleeWeaponQuestion") ?
                 marineAsker.askMeleeWeapon() : null;
-        Chapter chapter = marineAsker.askQuestion("Хотите изменить орден солдата?") ?
+        Chapter chapter = marineAsker.askQuestion("ChangeChapterQuestion") ?
                 marineAsker.askChapter() : null;
         return new MarineRaw(
                 name,

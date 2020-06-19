@@ -4,9 +4,10 @@ import client.controllers.AskWindowController;
 import client.controllers.LoginWindowController;
 import client.controllers.MainWindowController;
 import client.controllers.tools.ObservableResourceFactory;
+import client.utility.OutputerUI;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
-import common.utility.Outputer;
+import client.utility.Outputer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
 /**
@@ -24,6 +26,7 @@ import java.util.Scanner;
 public class App extends Application {
     public static final String PS1 = "$ ";
     public static final String PS2 = "> ";
+    public static final String BUNDLE = "bundles.gui";
 
     private static final String APP_TITLE = "Collection Keeper";
 
@@ -33,8 +36,14 @@ public class App extends Application {
     private static Client client;
 
     private Stage primaryStage;
+    private static ObservableResourceFactory resourceFactory;
 
     public static void main(String[] args) {
+        resourceFactory = new ObservableResourceFactory();
+        resourceFactory.setResources(ResourceBundle.getBundle(BUNDLE));
+        OutputerUI.setResourceFactory(resourceFactory);
+        Outputer.setResourceFactory(resourceFactory);
+
         if (initialize(args)) launch(args);
         else System.exit(0);
     }
@@ -55,11 +64,11 @@ public class App extends Application {
                     .getLocation()
                     .getPath())
                     .getName();
-            Outputer.println("Использование: 'java -jar " + jarName + " <host> <port>'");
+            Outputer.println("Using","'java -jar " + jarName + " <host> <port>'");
         } catch (NumberFormatException exception) {
-            Outputer.printerror("Порт должен быть представлен числом!");
+            Outputer.printerror("PortMustBeNumber");
         } catch (NotInDeclaredLimitsException exception) {
-            Outputer.printerror("Порт не может быть отрицательным!");
+            Outputer.printerror("PortMustBeNotNegative");
         }
         return false;
     }
@@ -76,7 +85,7 @@ public class App extends Application {
             LoginWindowController loginWindowController = loginWindowLoader.getController();
             loginWindowController.setApp(this);
             loginWindowController.setClient(client);
-            loginWindowController.initializeConnection();
+            loginWindowController.initLangs(resourceFactory);
 
             primaryStage.setTitle(APP_TITLE);
 
@@ -106,8 +115,6 @@ public class App extends Application {
 
     public void setMainWindow() {
         try {
-            ObservableResourceFactory resourceFactory = new ObservableResourceFactory();
-
             FXMLLoader mainWindowLoader = new FXMLLoader();
             mainWindowLoader.setLocation(getClass().getResource("/view/MainWindow.fxml"));
             Parent mainWindowRootNode = mainWindowLoader.load();
@@ -127,7 +134,7 @@ public class App extends Application {
             askStage.initOwner(primaryStage);
             AskWindowController askWindowController = askWindowLoader.getController();
             askWindowController.setAskStage(askStage);
-            askWindowController.setResourceFactory(resourceFactory);
+            askWindowController.initLangs(resourceFactory);
 
             mainWindowController.setClient(client);
             mainWindowController.setAskStage(askStage);

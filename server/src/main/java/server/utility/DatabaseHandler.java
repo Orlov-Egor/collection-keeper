@@ -1,6 +1,5 @@
 package server.utility;
 
-import common.utility.Outputer;
 import server.App;
 
 import java.sql.*;

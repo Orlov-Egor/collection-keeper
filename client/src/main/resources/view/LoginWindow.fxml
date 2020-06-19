@@ -27,12 +27,14 @@
                 <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
             </padding>
             <children>
-                <Label text="Username" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES">
+                <Label fx:id="usernameLabel" text="Username" GridPane.halignment="CENTER" GridPane.rowIndex="1"
+                       GridPane.vgrow="SOMETIMES">
                     <font>
                         <Font size="21.0"/>
                     </font>
                 </Label>
-                <Label text="Password" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.vgrow="SOMETIMES">
+                <Label fx:id="passwordLabel" text="Password" GridPane.halignment="CENTER" GridPane.rowIndex="2"
+                       GridPane.vgrow="SOMETIMES">
                     <font>
                         <Font size="21.0"/>
                     </font>
@@ -50,11 +52,12 @@
                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnSpan="2"
                       GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.vgrow="SOMETIMES">
                     <children>
-                        <CheckBox fx:id="registerCheckBox" mnemonicParsing="false" text="Register"/>
-                        <Button mnemonicParsing="false" onAction="#signInButtonOnAction" text="Sign in"/>
+                        <CheckBox fx:id="registerCheckBox" mnemonicParsing="false" text="RegisterCheckbox"/>
+                        <Button fx:id="signInButton" mnemonicParsing="false" onAction="#signInButtonOnAction"
+                                text="SignInButton"/>
                     </children>
                 </HBox>
-                <Label fx:id="isConnectedLabel" text="Not Connected" textFill="RED" GridPane.columnSpan="2"
+                <Label fx:id="isConnectedLabel" text="IsConnected" textFill="RED" GridPane.columnSpan="2"
                        GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.vgrow="NEVER"/>
             </children>
         </GridPane>

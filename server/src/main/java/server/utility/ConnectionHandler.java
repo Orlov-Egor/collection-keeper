@@ -3,7 +3,6 @@ package server.utility;
 import common.interaction.Request;
 import common.interaction.Response;
 import common.interaction.ResponseCode;
-import common.utility.Outputer;
 import server.App;
 import server.Server;
 
@@ -11,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.*;
 
 /**

@@ -9,6 +9,7 @@ import common.interaction.MarineRaw;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -54,6 +55,8 @@ public class AskWindowController implements Initializable {
     private ComboBox<Weapon> weaponBox;
     @FXML
     private ComboBox<MeleeWeapon> meleeWeaponBox;
+    @FXML
+    private Button enterButton;
 
     private Stage askStage;
     private MarineRaw resultMarine;
@@ -98,6 +101,7 @@ public class AskWindowController implements Initializable {
         meleeWeaponLabel.textProperty().bind(resourceFactory.getStringBinding("MeleeWeaponColumn"));
         chapterNameLabel.textProperty().bind(resourceFactory.getStringBinding("ChapterNameColumn"));
         chapterSizeLabel.textProperty().bind(resourceFactory.getStringBinding("ChapterSizeColumn"));
+        enterButton.textProperty().bind(resourceFactory.getStringBinding("EnterButton"));
     }
 
     private String convertName() throws IllegalArgumentException {
@@ -106,7 +110,7 @@ public class AskWindowController implements Initializable {
             name = nameField.getText();
             if (name.equals("")) throw new MustBeNotEmptyException();
         } catch (MustBeNotEmptyException exception) {
-            OutputerUI.error("Name can't be empty!");
+            OutputerUI.error("NameEmptyException");
             throw new IllegalArgumentException();
         }
         return name;
@@ -119,7 +123,7 @@ public class AskWindowController implements Initializable {
             strX = coordinatesXField.getText();
             x = Double.parseDouble(strX);
         } catch (NumberFormatException exception) {
-            OutputerUI.error("X must be a number!");
+            OutputerUI.error("CoordinatesXFormatException");
             throw new IllegalArgumentException();
         }
         return x;
@@ -133,10 +137,10 @@ public class AskWindowController implements Initializable {
             y = Float.parseFloat(strY);
             if (y > SpaceMarine.MAX_Y) throw new NotInDeclaredLimitsException();
         } catch (NumberFormatException exception) {
-            OutputerUI.error("Y must be a number!");
+            OutputerUI.error("CoordinatesYFormatException");
             throw new IllegalArgumentException();
         } catch (NotInDeclaredLimitsException exception) {
-            OutputerUI.error("Y can't be more than " + SpaceMarine.MAX_Y + "!");
+            OutputerUI.error("CoordinatesYLimitsException", new String[] {String.valueOf(SpaceMarine.MAX_Y)});
             throw new IllegalArgumentException();
         }
         return y;
@@ -150,10 +154,10 @@ public class AskWindowController implements Initializable {
             health = Double.parseDouble(strHealth);
             if (health <= SpaceMarine.MIN_HEALTH) throw new NotInDeclaredLimitsException();
         } catch (NumberFormatException exception) {
-            OutputerUI.error("Health must be a number!");
+            OutputerUI.error("HealthFormatException");
             throw new IllegalArgumentException();
         } catch (NotInDeclaredLimitsException exception) {
-            OutputerUI.error("Health must be more than zero!");
+            OutputerUI.error("HealthLimitsException");
             throw new IllegalArgumentException();
         }
         return health;
@@ -165,7 +169,7 @@ public class AskWindowController implements Initializable {
             chapterName = chapterNameField.getText();
             if (chapterName.equals("")) throw new MustBeNotEmptyException();
         } catch (MustBeNotEmptyException exception) {
-            OutputerUI.error("Chapter name can't be empty!");
+            OutputerUI.error("ChapterNameEmptyException");
             throw new IllegalArgumentException();
         }
         return chapterName;
@@ -180,10 +184,10 @@ public class AskWindowController implements Initializable {
             if (marinesCount < SpaceMarine.MIN_MARINES || marinesCount > SpaceMarine.MAX_MARINES)
                 throw new NotInDeclaredLimitsException();
         } catch (NotInDeclaredLimitsException exception) {
-            OutputerUI.error("Chapter size must be positive and less than " + (SpaceMarine.MAX_MARINES + 1) + "!");
+            OutputerUI.error("ChapterSizeLimitsException", new String[] {String.valueOf(SpaceMarine.MAX_MARINES + 1)});
             throw new IllegalArgumentException();
         } catch (NumberFormatException exception) {
-            OutputerUI.error("Chapter size must be a number!");
+            OutputerUI.error("ChapterSizeFormatException");
             throw new IllegalArgumentException();
         }
         return marinesCount;
@@ -224,7 +228,7 @@ public class AskWindowController implements Initializable {
     }
 
 
-    public void setResourceFactory(ObservableResourceFactory resourceFactory) {
+    public void initLangs(ObservableResourceFactory resourceFactory) {
         this.resourceFactory = resourceFactory;
         bindGuiLanguage();
     }

@@ -28,7 +28,6 @@ public class CommandManager {
     private Command removeGreaterCommand;
     private Command historyCommand;
     private Command sumOfHealthCommand;
-    private Command serverExitCommand;
     private Command loginCommand;
     private Command registerCommand;
     private Command refreshCommand;
@@ -39,7 +38,7 @@ public class CommandManager {
     public CommandManager(Command infoCommand, Command addCommand, Command updateCommand, Command removeByIdCommand,
                           Command clearCommand, Command exitCommand, Command executeScriptCommand, Command addIfMinCommand,
                           Command removeGreaterCommand, Command historyCommand, Command sumOfHealthCommand,
-                          Command serverExitCommand, Command loginCommand, Command registerCommand, Command refreshCommand) {
+                          Command loginCommand, Command registerCommand, Command refreshCommand) {
         this.infoCommand = infoCommand;
         this.addCommand = addCommand;
         this.updateCommand = updateCommand;
@@ -51,7 +50,6 @@ public class CommandManager {
         this.removeGreaterCommand = removeGreaterCommand;
         this.historyCommand = historyCommand;
         this.sumOfHealthCommand = sumOfHealthCommand;
-        this.serverExitCommand = serverExitCommand;
         this.loginCommand = loginCommand;
         this.registerCommand = registerCommand;
         this.refreshCommand = refreshCommand;
@@ -66,7 +64,6 @@ public class CommandManager {
         commands.add(removeGreaterCommand);
         commands.add(historyCommand);
         commands.add(sumOfHealthCommand);
-        commands.add(serverExitCommand);
     }
 
     /**
@@ -247,13 +244,15 @@ public class CommandManager {
             historyLocker.readLock().lock();
             try {
                 if (commandHistory.length == 0) throw new HistoryIsEmptyException();
-                ResponseOutputer.appendln("Последние использованные команды:");
+                ResponseOutputer.appendln("LastUsingCommand");
+                String arg = "\n";
                 for (String command : commandHistory) {
-                    if (command != null) ResponseOutputer.appendln(" " + command);
+                    if (command != null) arg += (" " + command + "\n");
                 }
+                ResponseOutputer.appendargs(arg);
                 return true;
             } catch (HistoryIsEmptyException exception) {
-                ResponseOutputer.appendln("Ни одной команды еще не было использовано!");
+                ResponseOutputer.appendln("LastUsingCommandException");
             } finally {
                 historyLocker.readLock().unlock();
             }
@@ -276,18 +275,6 @@ public class CommandManager {
         } finally {
             collectionLocker.readLock().unlock();
         }
-    }
-
-    /**
-     * Executes needed command.
-     *
-     * @param stringArgument Its string argument.
-     * @param objectArgument Its object argument.
-     * @param user           User object.
-     * @return Command exit status.
-     */
-    public boolean serverExit(String stringArgument, Object objectArgument, User user) {
-        return serverExitCommand.execute(stringArgument, objectArgument, user);
     }
 
     /**

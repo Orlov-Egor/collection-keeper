@@ -1,4 +1,4 @@
-package common.utility;
+package server.utility;
 
 /**
  * Class for outputting something.

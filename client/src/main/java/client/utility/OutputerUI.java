@@ -1,52 +1,53 @@
 package client.utility;
 
+import client.controllers.tools.ObservableResourceFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.MissingResourceException;
 
 /**
  * Class for outputting something to user.
  */
 public class OutputerUI {
-    private static final String INFO_DEFAULT_TITLE = "Collection Keeper";
-    private static final String ERROR_DEFAULT_TITLE = "Collection Keeper";
+    private static final String INFO_TITLE = "Collection Keeper";
+    private static final String ERROR_TITLE = "Collection Keeper";
+
+    private static ObservableResourceFactory resourceFactory;
+
+    private static void msg(String title, String toOut, String[] args, AlertType msgType) {
+        Alert alert = new Alert(msgType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(tryResource(toOut, args));
+        alert.showAndWait();
+    }
+
+    private static String tryResource(String str, String[] args) {
+        try {
+            if (haveResourceFactory()) throw new NullPointerException();
+            if (args == null) return resourceFactory.getResources().getString(str);
+            MessageFormat messageFormat = new MessageFormat(resourceFactory.getResources().getString(str));
+            return messageFormat.format(args);
+        } catch (MissingResourceException | NullPointerException exception) {
+            return str;
+        }
+    }
+
 
     /**
      * Prints toOut.toString() + \n to user.
      *
-     * @param title Title of alert.
      * @param toOut Object to print.
      */
-    public static void info(String title, Object toOut) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(toOut.toString());
-
-        alert.showAndWait();
+    public static void info(String toOut, String[] args) {
+        msg(INFO_TITLE, toOut, args, AlertType.INFORMATION);
     }
 
-    /**
-     * Prints toOut.toString() + \n to user.
-     *
-     * @param toOut Object to print.
-     */
-    public static void info(Object toOut) {
-        info(INFO_DEFAULT_TITLE, toOut);
-    }
-
-    /**
-     * Prints error: toOut.toString() to user.
-     *
-     * @param title Title of alert.
-     * @param toOut Error to print.
-     */
-    public static void error(String title, Object toOut) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(toOut.toString());
-
-        alert.showAndWait();
+    public static void info(String toOut) {
+        info(toOut, null);
     }
 
     /**
@@ -54,20 +55,12 @@ public class OutputerUI {
      *
      * @param toOut Error to print.
      */
-    public static void error(Object toOut) {
-        error(ERROR_DEFAULT_TITLE, toOut);
+    public static void error(String toOut, String[] args) {
+        msg(ERROR_TITLE, toOut, args, AlertType.ERROR);
     }
 
-    /**
-     * Prints error if object starts with 'error: ' or info in other case.
-     *
-     * @param title Title of alert.
-     * @param toOut Message to print.
-     */
-    public static void tryError(String title, Object toOut) {
-        if (toOut.toString().startsWith("error: "))
-            error(title, toOut.toString().substring(7));
-        else info(title, toOut.toString());
+    public static void error(String toOut) {
+        error(toOut, null);
     }
 
     /**
@@ -75,9 +68,22 @@ public class OutputerUI {
      *
      * @param toOut Message to print.
      */
-    public static void tryError(Object toOut) {
-        if (toOut.toString().startsWith("error: "))
-            error(ERROR_DEFAULT_TITLE, toOut.toString().substring(7));
-        else info(INFO_DEFAULT_TITLE, toOut.toString());
+    public static void tryError(String toOut, String[] args) {
+        if (toOut.startsWith("error: "))
+            msg(ERROR_TITLE, toOut.substring(7), args, AlertType.ERROR);
+        else msg(INFO_TITLE, toOut, args, AlertType.INFORMATION);
+    }
+
+    public static void tryError(String toOut) {
+        tryError(toOut, null);
+    }
+
+
+    public static void setResourceFactory(ObservableResourceFactory resourceFactory) {
+        OutputerUI.resourceFactory = resourceFactory;
+    }
+
+    public static boolean haveResourceFactory() {
+        return resourceFactory == null;
     }
 }

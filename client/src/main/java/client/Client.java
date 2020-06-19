@@ -10,7 +10,7 @@ import common.interaction.Request;
 import common.interaction.Response;
 import common.interaction.ResponseCode;
 import common.interaction.User;
-import common.utility.Outputer;
+import client.utility.Outputer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -39,7 +39,7 @@ public class Client implements Runnable {
         try {
             connectToServer();
         } catch (NotInDeclaredLimitsException exception) {
-            Outputer.printerror("Клиент не может быть запущен!");
+            Outputer.printerror("ClientException");
             System.exit(0);
         } catch (ConnectionErrorException exception) { /* ? */ }
     }
@@ -48,10 +48,10 @@ public class Client implements Runnable {
         try {
             processRequestToServer(MainWindowController.EXIT_COMMAND_NAME, "", null);
             socketChannel.close();
-            Outputer.println("Работа клиента завершена.");
+            Outputer.println("EndWorkOfClient");
         } catch (IOException | NullPointerException exception) {
-            Outputer.printerror("Произошла ошибка при попытке завершить соединение с сервером!");
-            if (socketChannel == null) Outputer.printerror("Невозможно завершить еще не установленное соединение!");
+            Outputer.printerror("EndWorkOfClientException");
+            if (socketChannel == null) Outputer.printerror("EndRunningWorkOfClientException");
         }
     }
 
@@ -66,19 +66,20 @@ public class Client implements Runnable {
             requestToServer = new Request(commandName, commandStringArgument, commandObjectArgument, user);
             serverWriter.writeObject(requestToServer);
             serverResponse = (Response) serverReader.readObject();
-            if (!serverResponse.getResponseBody().isEmpty()) OutputerUI.tryError(serverResponse.getResponseBody());
+            if (!serverResponse.getResponseBody().isEmpty())
+                OutputerUI.tryError(serverResponse.getResponseBody(), serverResponse.getResponseBodyArgs());
         } catch (InvalidClassException | NotSerializableException exception) {
-            OutputerUI.error("Произошла ошибка при отправке данных на сервер!");
+            OutputerUI.error("DataSendingException");
         } catch (ClassNotFoundException exception) {
-            OutputerUI.error("Произошла ошибка при чтении полученных данных!");
+            OutputerUI.error("DataReadingException");
         } catch (IOException exception) {
             if (requestToServer.getCommandName().equals(MainWindowController.EXIT_COMMAND_NAME)) return null;
-            OutputerUI.error("Соединение с сервером разорвано!");
+            OutputerUI.error("EndConnectionToServerException");
             try {
                 connectToServer();
-                OutputerUI.info("Соединение с сервером установлено.");
+                OutputerUI.info("ConnectionToServerComplete");
             } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
-                OutputerUI.info("Попробуйте повторить команду позднее.");
+                OutputerUI.info("TryCommandLater");
             }
         }
         return serverResponse == null ? null : serverResponse.getMarinesCollection();
@@ -99,18 +100,19 @@ public class Client implements Runnable {
                 if (requestToServer.isEmpty()) continue;
                 serverWriter.writeObject(requestToServer);
                 serverResponse = (Response) serverReader.readObject();
-                if (!serverResponse.getResponseBody().isEmpty()) OutputerUI.tryError(serverResponse.getResponseBody());
+                if (!serverResponse.getResponseBody().isEmpty())
+                    OutputerUI.tryError(serverResponse.getResponseBody(), serverResponse.getResponseBodyArgs());
             } catch (InvalidClassException | NotSerializableException exception) {
-                OutputerUI.error("Произошла ошибка при отправке данных на сервер!");
+                OutputerUI.error("DataSendingException");
             } catch (ClassNotFoundException exception) {
-                OutputerUI.error("Произошла ошибка при чтении полученных данных!");
+                OutputerUI.error("DataReadingException");
             } catch (IOException exception) {
-                Outputer.printerror("Соединение с сервером разорвано!");
+                OutputerUI.error("EndConnectionToServerException");
                 try {
                     connectToServer();
-                    OutputerUI.info("Соединение с сервером установлено.");
+                    OutputerUI.info("ConnectionToServerComplete");
                 } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
-                    OutputerUI.info("Попробуйте повторить команду позднее.");
+                    OutputerUI.info("TryCommandLater");
                 }
             }
         } while (!requestToServer.getCommandName().equals("exit"));
@@ -131,18 +133,18 @@ public class Client implements Runnable {
             if (serverWriter == null) throw new IOException();
             serverWriter.writeObject(requestToServer);
             serverResponse = (Response) serverReader.readObject();
-            OutputerUI.tryError(serverResponse.getResponseBody());
+            OutputerUI.tryError(serverResponse.getResponseBody(), serverResponse.getResponseBodyArgs());
         } catch (InvalidClassException | NotSerializableException exception) {
-            OutputerUI.error("Произошла ошибка при отправке данных на сервер!");
+            OutputerUI.error("DataSendingException");
         } catch (ClassNotFoundException exception) {
-            OutputerUI.error("Произошла ошибка при чтении полученных данных!");
+            OutputerUI.error("DataReadingException");
         } catch (IOException exception) {
-            OutputerUI.error("Соединение с сервером разорвано!");
+            OutputerUI.error("EndConnectionToServerException");
             try {
                 connectToServer();
-                OutputerUI.info("Соединение с сервером установлено.");
+                OutputerUI.info("ConnectionToServerComplete");
             } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
-                OutputerUI.info("Попробуйте повторить авторизацию позднее.");
+                OutputerUI.info("TryAuthLater");
             }
         }
         if (serverResponse != null && serverResponse.getResponseCode().equals(ResponseCode.OK)) {
@@ -161,18 +163,18 @@ public class Client implements Runnable {
      */
     private void connectToServer() throws ConnectionErrorException, NotInDeclaredLimitsException {
         try {
-            Outputer.println("Соединение с сервером...");
+            Outputer.println("ConnectionToServer");
             socketChannel = SocketChannel.open(new InetSocketAddress(host, port));
             serverWriter = new ObjectOutputStream(socketChannel.socket().getOutputStream());
             serverReader = new ObjectInputStream(socketChannel.socket().getInputStream());
             isConnected = true;
-            Outputer.println("Соединение с сервером установлено.");
+            Outputer.println("ConnectionToServerComplete");
         } catch (IllegalArgumentException exception) {
-            Outputer.printerror("Адрес сервера введен некорректно!");
+            Outputer.printerror("ServerAddressException");
             isConnected = false;
             throw new NotInDeclaredLimitsException();
         } catch (IOException exception) {
-            Outputer.printerror("Произошла ошибка при соединении с сервером!");
+            Outputer.printerror("ConnectionToServerException");
             isConnected = false;
             throw new ConnectionErrorException();
         }

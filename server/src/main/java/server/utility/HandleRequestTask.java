@@ -30,7 +30,8 @@ public class HandleRequestTask extends RecursiveTask<Response> {
         commandManager.addToHistory(request.getCommandName(), request.getUser());
         ResponseCode responseCode = executeCommand(request.getCommandName(), request.getCommandStringArgument(),
                 request.getCommandObjectArgument(), hashedUser);
-        return new Response(responseCode, ResponseOutputer.getAndClear(), collectionManager.getCollection());
+        return new Response(responseCode, ResponseOutputer.getAndClear(), ResponseOutputer.getArgsAndClear(),
+                collectionManager.getCollection());
     }
 
     /**
@@ -90,10 +91,6 @@ public class HandleRequestTask extends RecursiveTask<Response> {
                 if (!commandManager.sumOfHealth(commandStringArgument, commandObjectArgument, user))
                     return ResponseCode.ERROR;
                 break;
-            case "server_exit":
-                if (!commandManager.serverExit(commandStringArgument, commandObjectArgument, user))
-                    return ResponseCode.ERROR;
-                return ResponseCode.SERVER_EXIT;
             case "login":
                 if (!commandManager.login(commandStringArgument, commandObjectArgument, user))
                     return ResponseCode.ERROR;

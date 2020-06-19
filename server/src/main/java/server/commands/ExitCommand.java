@@ -6,7 +6,7 @@ import server.utility.ResponseOutputer;
 
 public class ExitCommand extends AbstractCommand {
     public ExitCommand() {
-        super("exit", "", "выйди разбiйник");
+        super("exit", "", "get out разбiйник");
     }
 
     /**
@@ -20,7 +20,8 @@ public class ExitCommand extends AbstractCommand {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         }
         return false;
     }

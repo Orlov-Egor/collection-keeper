@@ -2,7 +2,7 @@ package server;
 
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
-import common.utility.Outputer;
+import server.utility.Outputer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.commands.*;
@@ -40,7 +40,6 @@ public class App {
                 new RemoveGreaterCommand(collectionManager, databaseCollectionManager),
                 new HistoryCommand(),
                 new SumOfHealthCommand(collectionManager),
-                new ServerExitCommand(),
                 new LoginCommand(databaseUserManager),
                 new RegisterCommand(databaseUserManager),
                 new RefreshCommand()

@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.App;
 import client.Client;
 import client.controllers.tools.ObservableResourceFactory;
 import client.utility.OutputerUI;
@@ -50,7 +51,6 @@ public class MainWindowController {
     private final long RANDOM_SEED = 1821L;
     private final Duration ANIMATION_DURATION = Duration.millis(800);
     private final double MAX_SIZE = 250;
-    private final String BUNDLE_NAME = "bundles.gui";
 
     @FXML
     private TableView<SpaceMarine> spaceMarineTable;
@@ -159,10 +159,6 @@ public class MainWindowController {
         localeMap.put("Deutsche", new Locale("de", "DE"));
         localeMap.put("Dansk", new Locale("da", "DK"));
         languageComboBox.setItems(FXCollections.observableArrayList(localeMap.keySet()));
-        languageComboBox.getSelectionModel().selectFirst();
-        languageComboBox.setOnAction((event) ->
-                resourceFactory.setResources(ResourceBundle.getBundle
-                        (BUNDLE_NAME, localeMap.get(languageComboBox.getValue()))));
     }
 
     private void initializeTable() {
@@ -194,7 +190,7 @@ public class MainWindowController {
 
     private void bindGuiLanguage() {
         resourceFactory.setResources(ResourceBundle.getBundle
-                (BUNDLE_NAME, localeMap.get(languageComboBox.getSelectionModel().getSelectedItem())));
+                (App.BUNDLE, localeMap.get(languageComboBox.getSelectionModel().getSelectedItem())));
 
         idColumn.textProperty().bind(resourceFactory.getStringBinding("IdColumn"));
         ownerColumn.textProperty().bind(resourceFactory.getStringBinding("OwnerColumn"));
@@ -263,7 +259,7 @@ public class MainWindowController {
             askStage.showAndWait();
             MarineRaw marineRaw = askWindowController.getAndClear();
             if (marineRaw != null) requestAction(UPDATE_COMMAND_NAME, id + "", marineRaw);
-        } else OutputerUI.error("Select the marine to update!");
+        } else OutputerUI.error("UpdateButtonSelectionException");
 
     }
 
@@ -272,7 +268,7 @@ public class MainWindowController {
         if (!spaceMarineTable.getSelectionModel().isEmpty())
             requestAction(REMOVE_COMMAND_NAME,
                     spaceMarineTable.getSelectionModel().getSelectedItem().getId().toString(), null);
-        else OutputerUI.error("Select the marine to remove!");
+        else OutputerUI.error("RemoveButtonSelectionException");
     }
 
     @FXML
@@ -283,6 +279,7 @@ public class MainWindowController {
     @FXML
     private void executeScriptButtonOnAction() {
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
+        if (selectedFile == null) return;
         if (client.processScriptToServer(selectedFile)) Platform.exit();
         else refreshButtonOnAction();
     }
@@ -309,7 +306,7 @@ public class MainWindowController {
                     marineFromTable.getChapter()
             );
             requestAction(REMOVE_GREATER_COMMAND_NAME, "", marineRaw);
-        } else OutputerUI.error("Select the marine to remove greater!");
+        } else OutputerUI.error("RemoveGreaterButtonSelectionException");
     }
 
     @FXML
@@ -411,6 +408,15 @@ public class MainWindowController {
 
     public void initLangs(ObservableResourceFactory resourceFactory) {
         this.resourceFactory = resourceFactory;
+        for (String localeName : localeMap.keySet()) {
+            if (localeMap.get(localeName).equals(resourceFactory.getResources().getLocale()))
+                languageComboBox.getSelectionModel().select(localeName);
+        }
+        if (languageComboBox.getSelectionModel().getSelectedItem().isEmpty())
+            languageComboBox.getSelectionModel().selectFirst();
+        languageComboBox.setOnAction((event) ->
+                resourceFactory.setResources(ResourceBundle.getBundle
+                        (App.BUNDLE, localeMap.get(languageComboBox.getValue()))));
         bindGuiLanguage();
     }
 }

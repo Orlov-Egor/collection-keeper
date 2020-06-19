@@ -10,7 +10,7 @@ import server.utility.ResponseOutputer;
 public class RefreshCommand extends AbstractCommand {
 
     public RefreshCommand() {
-        super("refresh", "", "внутренняя команда");
+        super("refresh", "", "~internal command~");
     }
 
     /**
@@ -24,7 +24,8 @@ public class RefreshCommand extends AbstractCommand {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         }
         return false;
     }

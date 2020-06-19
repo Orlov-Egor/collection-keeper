@@ -3,7 +3,7 @@ package server;
 import common.exceptions.ClosingSocketException;
 import common.exceptions.ConnectionErrorException;
 import common.exceptions.OpeningServerSocketException;
-import common.utility.Outputer;
+import server.utility.Outputer;
 import server.utility.CollectionManager;
 import server.utility.CommandManager;
 import server.utility.ConnectionHandler;

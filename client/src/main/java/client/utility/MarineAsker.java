@@ -5,7 +5,7 @@ import common.data.*;
 import common.exceptions.IncorrectInputInScriptException;
 import common.exceptions.MustBeNotEmptyException;
 import common.exceptions.NotInDeclaredLimitsException;
-import common.utility.Outputer;
+import client.utility.Outputer;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -29,21 +29,19 @@ public class MarineAsker {
     public String askName() throws IncorrectInputInScriptException {
         String name;
         try {
-            Outputer.println("Введите имя:");
+            Outputer.println("EnterName");
             Outputer.print(App.PS2);
             name = userScanner.nextLine().trim();
             Outputer.println(name);
             if (name.equals("")) throw new MustBeNotEmptyException();
             return name;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Имя не распознано!");
-            OutputerUI.error("Имя не распознано!");
+            Outputer.printerror("NameNotIdentifiedException");
         } catch (MustBeNotEmptyException exception) {
-            Outputer.printerror("Имя не может быть пустым!");
-            OutputerUI.error("Имя не может быть пустым!");
+            Outputer.printerror("NameEmptyException");
         } catch (IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -59,21 +57,19 @@ public class MarineAsker {
         String strX;
         double x;
         try {
-            Outputer.println("Введите координату X:");
+            Outputer.println("EnterX");
             Outputer.print(App.PS2);
             strX = userScanner.nextLine().trim();
             Outputer.println(strX);
             x = Double.parseDouble(strX);
             return x;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Координата X не распознана!");
-            OutputerUI.error("Координата X не распознана!");
+            Outputer.printerror("XNotIdentifiedException");
         } catch (NumberFormatException exception) {
-            Outputer.printerror("Координата X должна быть представлена числом!");
-            OutputerUI.error("Координата X должна быть представлена числом!");
+            Outputer.printerror("XMustBeNumberException");
         } catch (NullPointerException | IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -89,7 +85,7 @@ public class MarineAsker {
         String strY;
         Float y;
         try {
-            Outputer.println("Введите координату Y < " + (SpaceMarine.MAX_Y + 1) + ":");
+            Outputer.println("EnterY", String.valueOf(SpaceMarine.MAX_Y + 1));
             Outputer.print(App.PS2);
             strY = userScanner.nextLine().trim();
             Outputer.println(strY);
@@ -97,16 +93,14 @@ public class MarineAsker {
             if (y > SpaceMarine.MAX_Y) throw new NotInDeclaredLimitsException();
             return y;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Координата Y не распознана!");
-            OutputerUI.error("Координата Y не распознана!");
+            Outputer.printerror("YNotIdentifiedException");
         } catch (NotInDeclaredLimitsException exception) {
-            Outputer.printerror("Координата Y не может превышать " + SpaceMarine.MAX_Y + "!");
-            OutputerUI.error("Координата Y не может превышать " + SpaceMarine.MAX_Y + "!");
+            Outputer.printerror("YMustBeLessException", String.valueOf(SpaceMarine.MAX_Y));
         } catch (NumberFormatException exception) {
-            Outputer.printerror("Координата Y должна быть представлена числом!");
+            Outputer.printerror("YMustBeNumberException");
         } catch (NullPointerException | IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -136,7 +130,7 @@ public class MarineAsker {
         String strHealth;
         double health;
         try {
-            Outputer.println("Введите здоровье:");
+            Outputer.println("EnterHealth");
             Outputer.print(App.PS2);
             strHealth = userScanner.nextLine().trim();
             Outputer.println(strHealth);
@@ -144,16 +138,14 @@ public class MarineAsker {
             if (health <= SpaceMarine.MIN_HEALTH) throw new NotInDeclaredLimitsException();
             return health;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Здоровье не распознано!");
-            OutputerUI.error("Здоровье не распознано!");
+            Outputer.printerror("HealthNotIdentifiedException");
         } catch (NotInDeclaredLimitsException exception) {
-            Outputer.printerror("Здоровье должно быть больше нуля!");
-            OutputerUI.error("Здоровье должно быть больше нуля!");
+            Outputer.printerror("HealthMustBeNumberException");
         } catch (NumberFormatException exception) {
-            Outputer.printerror("Здоровье должно быть представлено числом!");
+            Outputer.printerror("HealthMustBeMoreZero");
         } catch (NullPointerException | IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -169,22 +161,20 @@ public class MarineAsker {
         String strCategory;
         AstartesCategory category;
         try {
-            Outputer.println("Список категорий - " + AstartesCategory.nameList());
-            Outputer.println("Введите категорию:");
+            Outputer.println("CategoryList", AstartesCategory.nameList());
+            Outputer.println("EnterCategory");
             Outputer.print(App.PS2);
             strCategory = userScanner.nextLine().trim();
             Outputer.println(strCategory);
             category = AstartesCategory.valueOf(strCategory.toUpperCase());
             return category;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Категория не распознана!");
-            OutputerUI.error("Категория не распознана!");
+            Outputer.printerror("CategoryNotIndentifiedException");
         } catch (IllegalArgumentException exception) {
-            Outputer.printerror("Категории нет в списке!");
-            OutputerUI.error("Категории нет в списке!");
+            Outputer.printerror("NoSuchCategory");
         } catch (IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -200,22 +190,20 @@ public class MarineAsker {
         String strWeaponType;
         Weapon weaponType;
         try {
-            Outputer.println("Список оружия дальнего боя - " + Weapon.nameList());
-            Outputer.println("Введите оружие дальнего боя:");
+            Outputer.println("WeaponList", Weapon.nameList());
+            Outputer.println("EnterWeapon");
             Outputer.print(App.PS2);
             strWeaponType = userScanner.nextLine().trim();
             Outputer.println(strWeaponType);
             weaponType = Weapon.valueOf(strWeaponType.toUpperCase());
             return weaponType;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Оружие не распознано!");
-            OutputerUI.error("Оружие не распознано!");
+            Outputer.printerror("WeaponNotIdentifiedException");
         } catch (IllegalArgumentException exception) {
-            Outputer.printerror("Оружия нет в списке!");
-            OutputerUI.error("Оружия нет в списке!");
+            Outputer.printerror("NoSuchWeapon");
         } catch (IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -231,22 +219,20 @@ public class MarineAsker {
         String strMeleeWeapon;
         MeleeWeapon meleeWeapon;
         try {
-            Outputer.println("Список оружия ближнего боя - " + MeleeWeapon.nameList());
-            Outputer.println("Введите оружие ближнего боя:");
+            Outputer.println("MeleeWeaponList", MeleeWeapon.nameList());
+            Outputer.println("EnterMeleeWeapon");
             Outputer.print(App.PS2);
             strMeleeWeapon = userScanner.nextLine().trim();
             Outputer.println(strMeleeWeapon);
             meleeWeapon = MeleeWeapon.valueOf(strMeleeWeapon.toUpperCase());
             return meleeWeapon;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Оружие не распознано!");
-            OutputerUI.error("Оружие не распознано!");
+            Outputer.printerror("WeaponNotIdentifiedException");
         } catch (IllegalArgumentException exception) {
-            Outputer.printerror("Оружия нет в списке!");
-            OutputerUI.error("Оружия нет в списке!");
+            Outputer.printerror("NoSuchWeapon");
         } catch (IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -261,21 +247,19 @@ public class MarineAsker {
     public String askChapterName() throws IncorrectInputInScriptException {
         String chapterName;
         try {
-            Outputer.println("Введите имя ордена:");
+            Outputer.println("EnterChapterName");
             Outputer.print(App.PS2);
             chapterName = userScanner.nextLine().trim();
             Outputer.println(chapterName);
             if (chapterName.equals("")) throw new MustBeNotEmptyException();
             return chapterName;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Имя ордена не распознано!");
-            OutputerUI.error("Имя ордена не распознано!");
+            Outputer.printerror("ChapterNameNotIdentifiedException");
         } catch (MustBeNotEmptyException exception) {
-            Outputer.printerror("Имя ордена не может быть пустым!");
-            OutputerUI.error("Имя ордена не может быть пустым!");
+            Outputer.printerror("ChapterNameMustBeNotEmptyException");
         } catch (IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -291,7 +275,7 @@ public class MarineAsker {
         String strMarinesCount;
         long marinesCount;
         try {
-            Outputer.println("Введите количество солдат в ордене < " + (SpaceMarine.MAX_MARINES + 1) + ":");
+            Outputer.println("EnterChapterMarinesCount", String.valueOf(SpaceMarine.MAX_MARINES + 1));
             Outputer.print(App.PS2);
             strMarinesCount = userScanner.nextLine().trim();
             Outputer.println(strMarinesCount);
@@ -300,17 +284,14 @@ public class MarineAsker {
                 throw new NotInDeclaredLimitsException();
             return marinesCount;
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Количество солдат в ордене не распознано!");
-            OutputerUI.error("Количество солдат в ордене не распознано!");
+            Outputer.printerror("ChapterMarinesCountNotIdentifiedException");
         } catch (NotInDeclaredLimitsException exception) {
-            Outputer.printerror("Количество солдат в ордене должно быть положительным и не превышать " + SpaceMarine.MAX_MARINES + "!");
-            OutputerUI.error("Количество солдат в ордене должно быть положительным и не превышать " + SpaceMarine.MAX_MARINES + "!");
+            Outputer.printerror("ChapterMarinesCountMustBeLessException", String.valueOf(SpaceMarine.MAX_MARINES));
         } catch (NumberFormatException exception) {
-            Outputer.printerror("Количество солдат в ордене должно быть представлено числом!");
-            OutputerUI.error("Количество солдат в ордене должно быть представлено числом!");
+            Outputer.printerror("ChapterMarinesCountMustBeNumberException");
         } catch (NullPointerException | IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();
@@ -338,24 +319,22 @@ public class MarineAsker {
      * @throws IncorrectInputInScriptException If script is running and something goes wrong.
      */
     public boolean askQuestion(String question) throws IncorrectInputInScriptException {
-        String finalQuestion = question + " (+/-):";
         String answer;
         try {
-            Outputer.println(finalQuestion);
+            Outputer.print(question);
+            Outputer.println(" (+/-):");
             Outputer.print(App.PS2);
             answer = userScanner.nextLine().trim();
             Outputer.println(answer);
             if (!answer.equals("+") && !answer.equals("-")) throw new NotInDeclaredLimitsException();
             return answer.equals("+");
         } catch (NoSuchElementException exception) {
-            Outputer.printerror("Ответ не распознан!");
-            OutputerUI.error("Ответ не распознан!");
+            Outputer.printerror("AnswerNotIndentifiedException");
         } catch (NotInDeclaredLimitsException exception) {
-            Outputer.printerror("Ответ должен быть представлен знаками '+' или '-'!");
-            OutputerUI.error("Ответ должен быть представлен знаками '+' или '-'!");
+            Outputer.printerror("AnswerLimitsException");
         } catch (IllegalStateException exception) {
-            Outputer.printerror("Непредвиденная ошибка!");
-            OutputerUI.error("Непредвиденная ошибка!");
+            Outputer.printerror("UnexpectedException");
+            OutputerUI.error("UnexpectedException");
             System.exit(0);
         }
         throw new IncorrectInputInScriptException();

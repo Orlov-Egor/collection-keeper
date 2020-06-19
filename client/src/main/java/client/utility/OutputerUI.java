@@ -5,7 +5,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.MissingResourceException;
 
 /**

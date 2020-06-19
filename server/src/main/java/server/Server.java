@@ -3,10 +3,10 @@ package server;
 import common.exceptions.ClosingSocketException;
 import common.exceptions.ConnectionErrorException;
 import common.exceptions.OpeningServerSocketException;
-import server.utility.Outputer;
 import server.utility.CollectionManager;
 import server.utility.CommandManager;
 import server.utility.ConnectionHandler;
+import server.utility.Outputer;
 
 import java.io.IOException;
 import java.net.ServerSocket;

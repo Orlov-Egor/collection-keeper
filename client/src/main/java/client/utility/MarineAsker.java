@@ -5,7 +5,6 @@ import common.data.*;
 import common.exceptions.IncorrectInputInScriptException;
 import common.exceptions.MustBeNotEmptyException;
 import common.exceptions.NotInDeclaredLimitsException;
-import client.utility.Outputer;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;

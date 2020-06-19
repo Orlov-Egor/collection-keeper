@@ -9,7 +9,6 @@ import common.interaction.MarineRaw;
 import common.interaction.Request;
 import common.interaction.ResponseCode;
 import common.interaction.User;
-import client.utility.Outputer;
 
 import java.io.File;
 import java.io.FileNotFoundException;

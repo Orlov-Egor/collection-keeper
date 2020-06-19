@@ -1,6 +1,7 @@
 package client;
 
 import client.controllers.MainWindowController;
+import client.utility.Outputer;
 import client.utility.OutputerUI;
 import client.utility.ScriptHandler;
 import common.data.SpaceMarine;
@@ -10,7 +11,6 @@ import common.interaction.Request;
 import common.interaction.Response;
 import common.interaction.ResponseCode;
 import common.interaction.User;
-import client.utility.Outputer;
 
 import java.io.*;
 import java.net.InetSocketAddress;

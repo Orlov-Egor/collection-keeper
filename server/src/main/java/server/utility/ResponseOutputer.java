@@ -45,7 +45,7 @@ public class ResponseOutputer {
         stringBuilder.append("error: " + toOut + "\n");
     }
 
-    public static void appendargs(String ... args) {
+    public static void appendargs(String... args) {
         argList.addAll(Arrays.asList(args));
     }
 

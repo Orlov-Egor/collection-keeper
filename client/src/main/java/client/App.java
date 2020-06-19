@@ -4,10 +4,10 @@ import client.controllers.AskWindowController;
 import client.controllers.LoginWindowController;
 import client.controllers.MainWindowController;
 import client.controllers.tools.ObservableResourceFactory;
+import client.utility.Outputer;
 import client.utility.OutputerUI;
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
-import client.utility.Outputer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -34,9 +34,8 @@ public class App extends Application {
     private static int port;
     private static Scanner userScanner;
     private static Client client;
-
-    private Stage primaryStage;
     private static ObservableResourceFactory resourceFactory;
+    private Stage primaryStage;
 
     public static void main(String[] args) {
         resourceFactory = new ObservableResourceFactory();
@@ -64,7 +63,7 @@ public class App extends Application {
                     .getLocation()
                     .getPath())
                     .getName();
-            Outputer.println("Using","'java -jar " + jarName + " <host> <port>'");
+            Outputer.println("Using", "'java -jar " + jarName + " <host> <port>'");
         } catch (NumberFormatException exception) {
             Outputer.printerror("PortMustBeNumber");
         } catch (NotInDeclaredLimitsException exception) {

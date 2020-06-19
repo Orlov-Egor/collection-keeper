@@ -140,7 +140,7 @@ public class AskWindowController implements Initializable {
             OutputerUI.error("CoordinatesYFormatException");
             throw new IllegalArgumentException();
         } catch (NotInDeclaredLimitsException exception) {
-            OutputerUI.error("CoordinatesYLimitsException", new String[] {String.valueOf(SpaceMarine.MAX_Y)});
+            OutputerUI.error("CoordinatesYLimitsException", new String[]{String.valueOf(SpaceMarine.MAX_Y)});
             throw new IllegalArgumentException();
         }
         return y;
@@ -184,7 +184,7 @@ public class AskWindowController implements Initializable {
             if (marinesCount < SpaceMarine.MIN_MARINES || marinesCount > SpaceMarine.MAX_MARINES)
                 throw new NotInDeclaredLimitsException();
         } catch (NotInDeclaredLimitsException exception) {
-            OutputerUI.error("ChapterSizeLimitsException", new String[] {String.valueOf(SpaceMarine.MAX_MARINES + 1)});
+            OutputerUI.error("ChapterSizeLimitsException", new String[]{String.valueOf(SpaceMarine.MAX_MARINES + 1)});
             throw new IllegalArgumentException();
         } catch (NumberFormatException exception) {
             OutputerUI.error("ChapterSizeFormatException");

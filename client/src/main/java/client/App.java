@@ -136,6 +136,7 @@ public class App extends Application {
             askWindowController.initLangs(resourceFactory);
 
             mainWindowController.setClient(client);
+            mainWindowController.setUsername(client.getUsername());
             mainWindowController.setAskStage(askStage);
             mainWindowController.setPrimaryStage(primaryStage);
             mainWindowController.setAskWindowController(askWindowController);

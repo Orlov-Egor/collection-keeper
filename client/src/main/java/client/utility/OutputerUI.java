@@ -83,9 +83,6 @@ public class OutputerUI {
         tryError(toOut, null);
     }
 
-    /**
-     * Setsr resource factory.
-     */
     public static void setResourceFactory(ObservableResourceFactory resourceFactory) {
         OutputerUI.resourceFactory = resourceFactory;
     }

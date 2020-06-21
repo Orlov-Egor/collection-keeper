@@ -165,6 +165,10 @@ public class Client implements Runnable {
         return isConnected;
     }
 
+    public String getUsername() {
+        return user == null ? null : user.getUsername();
+    }
+
     /**
      * Connecting to server.
      */

@@ -274,7 +274,7 @@ public class AskWindowController implements Initializable {
     }
 
     /**
-    * Set ask stage.
+    * Init langs.
     */
     public void initLangs(ObservableResourceFactory resourceFactory) {
         this.resourceFactory = resourceFactory;

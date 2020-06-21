@@ -4,13 +4,9 @@ import common.exceptions.WrongAmountOfElementsException;
 import common.interaction.User;
 import server.utility.ResponseOutputer;
 
-/**
- * Command 'exit'. Checks for wrong arguments then do nothing.
- */
 public class ExitCommand extends AbstractCommand {
-
     public ExitCommand() {
-        super("exit", "", "завершить работу клиента");
+        super("exit", "", "get out разбiйник");
     }
 
     /**
@@ -24,7 +20,8 @@ public class ExitCommand extends AbstractCommand {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         }
         return false;
     }

@@ -18,7 +18,7 @@ public class ClearCommand extends AbstractCommand {
     private DatabaseCollectionManager databaseCollectionManager;
 
     public ClearCommand(CollectionManager collectionManager, DatabaseCollectionManager databaseCollectionManager) {
-        super("clear", "", "очистить коллекцию");
+        super("clear", "", "clear the collection");
         this.collectionManager = collectionManager;
         this.databaseCollectionManager = databaseCollectionManager;
     }
@@ -34,22 +34,22 @@ public class ClearCommand extends AbstractCommand {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             for (SpaceMarine marine : collectionManager.getCollection()) {
                 if (!marine.getOwner().equals(user)) throw new PermissionDeniedException();
-                if (!databaseCollectionManager.checkMarineUserId(marine.getId(), user)) throw new ManualDatabaseEditException();
+                if (!databaseCollectionManager.checkMarineUserId(marine.getId(), user))
+                    throw new ManualDatabaseEditException();
             }
             databaseCollectionManager.clearCollection();
             collectionManager.clearCollection();
-            ResponseOutputer.appendln("Коллекция очищена!");
+            ResponseOutputer.appendln("ClearCollection");
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         } catch (DatabaseHandlingException exception) {
-            ResponseOutputer.appenderror("Произошла ошибка при обращении к базе данных!");
+            ResponseOutputer.appenderror("DatabaseHandlingException");
         } catch (PermissionDeniedException exception) {
-            ResponseOutputer.appenderror("Недостаточно прав для выполнения данной команды!");
-            ResponseOutputer.appendln("Принадлежащие другим пользователям объекты доступны только для чтения.");
+            ResponseOutputer.appenderror("NoughRightsException");
         } catch (ManualDatabaseEditException exception) {
-            ResponseOutputer.appenderror("Произошло прямое изменение базы данных!");
-            ResponseOutputer.appendln("Перезапустите клиент для избежания возможных ошибок.");
+            ResponseOutputer.appenderror("ManualDatabaseException");
         }
         return false;
     }

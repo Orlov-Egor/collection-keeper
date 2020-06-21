@@ -14,7 +14,7 @@ public class LoginCommand extends AbstractCommand {
     private DatabaseUserManager databaseUserManager;
 
     public LoginCommand(DatabaseUserManager databaseUserManager) {
-        super("login", "", "внутренняя команда");
+        super("login", "", "~internal command~");
         this.databaseUserManager = databaseUserManager;
     }
 
@@ -27,18 +27,19 @@ public class LoginCommand extends AbstractCommand {
     public boolean execute(String stringArgument, Object objectArgument, User user) {
         try {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
-            if (databaseUserManager.checkUserByUsernameAndPassword(user)) ResponseOutputer.appendln("Пользователь " +
-                    user.getUsername() + " авторизован.");
-            else throw new UserIsNotFoundException();
+            if (!databaseUserManager.checkUserByUsernameAndPassword(user)) throw new UserIsNotFoundException();
+            ResponseOutputer.appendln("UserAuthorized");
+            ResponseOutputer.appendargs(user.getUsername());
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: эммм...эээ.это внутренняя команда...");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         } catch (ClassCastException exception) {
-            ResponseOutputer.appenderror("Переданный клиентом объект неверен!");
+            ResponseOutputer.appenderror("ClientObjectException");
         } catch (DatabaseHandlingException exception) {
-            ResponseOutputer.appenderror("Произошла ошибка при обращении к базе данных!");
+            ResponseOutputer.appenderror("DatabaseHandlingException");
         } catch (UserIsNotFoundException exception) {
-            ResponseOutputer.appenderror("Неправильные имя пользователя или пароль!");
+            ResponseOutputer.appenderror("InvalidUserException");
         }
         return false;
     }

@@ -4,7 +4,6 @@ import common.data.*;
 import common.exceptions.DatabaseHandlingException;
 import common.interaction.MarineRaw;
 import common.interaction.User;
-import common.utility.Outputer;
 import server.App;
 
 import java.sql.PreparedStatement;
@@ -419,9 +418,9 @@ public class DatabaseCollectionManager {
      * Checks Marine user id.
      *
      * @param marineId Id of Marine.
-     * @param user Owner of marine.
-     * @throws DatabaseHandlingException When there's exception inside.
+     * @param user     Owner of marine.
      * @return Is everything ok.
+     * @throws DatabaseHandlingException When there's exception inside.
      */
     public boolean checkMarineUserId(long marineId, User user) throws DatabaseHandlingException {
         PreparedStatement preparedSelectMarineByIdAndUserIdStatement = null;

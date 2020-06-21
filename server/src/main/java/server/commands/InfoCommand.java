@@ -14,7 +14,7 @@ public class InfoCommand extends AbstractCommand {
     private CollectionManager collectionManager;
 
     public InfoCommand(CollectionManager collectionManager) {
-        super("info", "", "вывести информацию о коллекции");
+        super("info", "", "show information about the collection");
         this.collectionManager = collectionManager;
     }
 
@@ -31,13 +31,15 @@ public class InfoCommand extends AbstractCommand {
             String lastInitTimeString = (lastInitTime == null) ? "в данной сессии инициализации еще не происходило" :
                     lastInitTime.toLocalDate().toString() + " " + lastInitTime.toLocalTime().toString();
 
-            ResponseOutputer.appendln("Сведения о коллекции:");
-            ResponseOutputer.appendln(" Тип: " + collectionManager.collectionType());
-            ResponseOutputer.appendln(" Количество элементов: " + collectionManager.collectionSize());
-            ResponseOutputer.appendln(" Дата последней инициализации: " + lastInitTimeString);
+            ResponseOutputer.appendln("CollectionInfo");
+            ResponseOutputer.appendargs(
+                    collectionManager.collectionType(),
+                    String.valueOf(collectionManager.collectionSize()),
+                    lastInitTimeString);
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         }
         return false;
     }

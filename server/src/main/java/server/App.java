@@ -2,7 +2,6 @@ package server;
 
 import common.exceptions.NotInDeclaredLimitsException;
 import common.exceptions.WrongAmountOfElementsException;
-import common.utility.Outputer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.commands.*;
@@ -14,7 +13,6 @@ import server.utility.*;
  * @author Sviridov Dmitry and Orlov Egor.
  */
 public class App {
-    // TODO: Добавить в delete запрос where + еще 1 условие, чтобы при командах изменения проверялся пользователь (его можно имзенить в самой бд)
     private static final int MAX_CLIENTS = 1000;
     public static Logger logger = LogManager.getLogger("ServerLogger");
     private static String databaseUsername = "s284724";
@@ -30,9 +28,7 @@ public class App {
         DatabaseCollectionManager databaseCollectionManager = new DatabaseCollectionManager(databaseHandler, databaseUserManager);
         CollectionManager collectionManager = new CollectionManager(databaseCollectionManager);
         CommandManager commandManager = new CommandManager(
-                new HelpCommand(),
                 new InfoCommand(collectionManager),
-                new ShowCommand(collectionManager),
                 new AddCommand(collectionManager, databaseCollectionManager),
                 new UpdateCommand(collectionManager, databaseCollectionManager),
                 new RemoveByIdCommand(collectionManager, databaseCollectionManager),
@@ -43,13 +39,11 @@ public class App {
                 new RemoveGreaterCommand(collectionManager, databaseCollectionManager),
                 new HistoryCommand(),
                 new SumOfHealthCommand(collectionManager),
-                new MaxByMeleeWeaponCommand(collectionManager),
-                new FilterByWeaponTypeCommand(collectionManager),
-                new ServerExitCommand(),
                 new LoginCommand(databaseUserManager),
-                new RegisterCommand(databaseUserManager)
+                new RegisterCommand(databaseUserManager),
+                new RefreshCommand()
         );
-        Server server = new Server(port, MAX_CLIENTS, commandManager);
+        Server server = new Server(port, MAX_CLIENTS, commandManager, collectionManager);
         server.run();
         databaseHandler.closeConnection();
     }

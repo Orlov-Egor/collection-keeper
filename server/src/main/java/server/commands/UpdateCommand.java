@@ -18,7 +18,7 @@ public class UpdateCommand extends AbstractCommand {
     private DatabaseCollectionManager databaseCollectionManager;
 
     public UpdateCommand(CollectionManager collectionManager, DatabaseCollectionManager databaseCollectionManager) {
-        super("update", "<ID> {element}", "обновить значение элемента коллекции по ID");
+        super("update", "<ID> {element}", "update an element in the collection");
         this.collectionManager = collectionManager;
         this.databaseCollectionManager = databaseCollectionManager;
     }
@@ -39,7 +39,8 @@ public class UpdateCommand extends AbstractCommand {
             SpaceMarine oldMarine = collectionManager.getById(id);
             if (oldMarine == null) throw new MarineNotFoundException();
             if (!oldMarine.getOwner().equals(user)) throw new PermissionDeniedException();
-            if (!databaseCollectionManager.checkMarineUserId(oldMarine.getId(), user)) throw new ManualDatabaseEditException();
+            if (!databaseCollectionManager.checkMarineUserId(oldMarine.getId(), user))
+                throw new ManualDatabaseEditException();
             MarineRaw marineRaw = (MarineRaw) objectArgument;
 
             databaseCollectionManager.updateMarineById(id, marineRaw);
@@ -66,26 +67,25 @@ public class UpdateCommand extends AbstractCommand {
                     chapter,
                     user
             ));
-            ResponseOutputer.appendln("Солдат успешно изменен!");
+            ResponseOutputer.appendln("MarineChange");
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Использование: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.appendln("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage() + "'");
         } catch (CollectionIsEmptyException exception) {
-            ResponseOutputer.appenderror("Коллекция пуста!");
+            ResponseOutputer.appenderror("CollectionIsEmptyException");
         } catch (NumberFormatException exception) {
-            ResponseOutputer.appenderror("ID должен быть представлен положительным числом!");
+            ResponseOutputer.appenderror("IdMustBeNumberException");
         } catch (MarineNotFoundException exception) {
-            ResponseOutputer.appenderror("Солдата с таким ID в коллекции нет!");
+            ResponseOutputer.appenderror("IdOfMarineException");
         } catch (ClassCastException exception) {
-            ResponseOutputer.appenderror("Переданный клиентом объект неверен!");
+            ResponseOutputer.appenderror("ClientObjectException");
         } catch (DatabaseHandlingException exception) {
-            ResponseOutputer.appenderror("Произошла ошибка при обращении к базе данных!");
+            ResponseOutputer.appenderror("DatabaseHandlingException");
         } catch (PermissionDeniedException exception) {
-            ResponseOutputer.appenderror("Недостаточно прав для выполнения данной команды!");
-            ResponseOutputer.appendln("Принадлежащие другим пользователям объекты доступны только для чтения.");
+            ResponseOutputer.appenderror("NoughRightsException");
         } catch (ManualDatabaseEditException exception) {
-            ResponseOutputer.appenderror("Произошло прямое изменение базы данных!");
-            ResponseOutputer.appendln("Перезапустите клиент для избежания возможных ошибок.");
+            ResponseOutputer.appenderror("ManualDatabaseException");
         }
         return false;
     }

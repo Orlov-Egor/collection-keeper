@@ -1,10 +1,15 @@
 package server.utility;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A class for generating responses to a client.
  */
 public class ResponseOutputer {
     private static StringBuilder stringBuilder = new StringBuilder();
+    private static List<String> argList = new ArrayList<>();
 
     /**
      * Append object to out to the end of string.
@@ -40,23 +45,8 @@ public class ResponseOutputer {
         stringBuilder.append("error: " + toOut + "\n");
     }
 
-    /**
-     * Append a table with two elements to the end of the line.
-     *
-     * @param element1 First element for the table.
-     * @param element2 Second element for the table.
-     */
-    public static void appendtable(Object element1, Object element2) {
-        stringBuilder.append(String.format("%-37s%-1s%n", element1, element2));
-    }
-
-    /**
-     * Takes a constructed string.
-     *
-     * @return Сonstructed string.
-     */
-    public static String getString() {
-        return stringBuilder.toString();
+    public static void appendargs(String... args) {
+        argList.addAll(Arrays.asList(args));
     }
 
     /**
@@ -65,15 +55,15 @@ public class ResponseOutputer {
      * @return Сonstructed string.
      */
     public static String getAndClear() {
-        String toReturn = stringBuilder.toString();
+        String toReturn = stringBuilder.toString().trim();
         stringBuilder.delete(0, stringBuilder.length());
         return toReturn;
     }
 
-    /**
-     * Сlears the buffer.
-     */
-    public static void clear() {
-        stringBuilder.delete(0, stringBuilder.length());
+    public static String[] getArgsAndClear() {
+        String[] argsAsArray = new String[argList.size()];
+        argsAsArray = argList.toArray(argsAsArray);
+        argList.clear();
+        return argsAsArray;
     }
 }

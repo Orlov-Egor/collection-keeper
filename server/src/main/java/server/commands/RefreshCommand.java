@@ -5,11 +5,12 @@ import common.interaction.User;
 import server.utility.ResponseOutputer;
 
 /**
- * Command 'history'. It's here just for logical structure.
+ * Command 'exit'. Checks for wrong arguments then do nothing.
  */
-public class HistoryCommand extends AbstractCommand {
-    public HistoryCommand() {
-        super("history", "", "show history of used commands");
+public class RefreshCommand extends AbstractCommand {
+
+    public RefreshCommand() {
+        super("refresh", "", "~internal command~");
     }
 
     /**

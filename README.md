@@ -6,7 +6,7 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-![Server][server-screenshot-url]
+![Client Picture][client-screenshot-url]
 
 ## About The Project
 
@@ -38,4 +38,4 @@ drslampro@gmail.com
 [issues-url]: https://github.com/slamach/collection-keeper/issues
 [license-shield]: https://img.shields.io/github/license/slamach/collection-keeper
 [license-url]: https://github.com/slamach/collection-keeper/blob/master/LICENSE
-[server-screenshot-url]: https://github.com/slamach/collection-keeper/blob/master/doc/server_demo.png
+[client-screenshot-url]: https://github.com/slamach/collection-keeper/blob/master/doc/client_pic.png

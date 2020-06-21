@@ -5,7 +5,6 @@ import common.data.SpaceMarine;
 import common.data.Weapon;
 import common.exceptions.CollectionIsEmptyException;
 import common.exceptions.DatabaseHandlingException;
-import common.utility.Outputer;
 import server.App;
 
 import java.time.LocalDateTime;

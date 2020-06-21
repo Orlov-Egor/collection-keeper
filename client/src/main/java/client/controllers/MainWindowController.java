@@ -130,6 +130,8 @@ public class MainWindowController {
     private Tooltip refreshButtonTooltip;
     @FXML
     private ComboBox<String> languageComboBox;
+    @FXML
+    private Label usernameLabel;
 
     private Client client;
     private Stage askStage;
@@ -392,6 +394,10 @@ public class MainWindowController {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public void setUsername(String username) {
+        usernameLabel.setText(username);
     }
 
     public void setAskStage(Stage askStage) {
